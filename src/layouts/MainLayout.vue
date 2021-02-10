@@ -28,7 +28,7 @@
         </q-tabs>
       </div>
       <div v-else>
-        <q-tabs  no-caps dense>
+        <q-tabs  no-caps dense class="bg-grey-3 text-black shadow 2">
           <q-tab v-if="!$store.state.selectedProvider.name" name="Loginprovider" icon="login" label="Login" @click="onLogin" />
           <q-tab v-if="$store.state.selectedProvider.name" name="Person" icon="person" @click="onLogin">
             {{$store.state.selectedProvider.name.substring(0,8)}}
