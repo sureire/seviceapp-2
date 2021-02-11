@@ -34,7 +34,8 @@ export default {
         return {
             newRequest :{
                 userid: this.$store.state.selectedUser.id,
-                serviceid: this.$store.state.selectedservice.id,
+                category: this.$store.state.selectedservice,
+                location: this.$store.state.selectedlocation,
                 requestdate: '',
                 status: 'pending',
                 preferedtimeslot: '',

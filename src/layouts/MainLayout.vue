@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHh Lpr lFf" class="shadow-2 rounded-borders">
     <q-header elevated>
       <q-toolbar>
         <q-btn
@@ -40,22 +40,54 @@
       </div>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      content-class="bg-grey-1"
-    >
-      <q-list>
-        <q-item-label
-          header
-          class="text-grey-8"
-          @click="onChangeType"
-        >
-          {{$store.state.usertype}}
-        </q-item-label>
-      </q-list>
-    </q-drawer>
+      <q-drawer
+        v-model="leftDrawerOpen"
+        show-if-above
+        :width="200"
+        :breakpoint="500"
+      >
+        <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
+          <q-list padding class="menu-list">
+            <q-item clickable v-ripple @click="$store.commit('setLoginType','User')">
+              <q-item-section avatar>
+                <q-icon name="mdi-account" />
+              </q-item-section>
+
+              <q-item-section>
+                User
+              </q-item-section>
+            </q-item>
+
+            <q-item active clickable v-ripple @click="$store.commit('setLoginType','Provider')">
+              <q-item-section avatar>
+                <q-icon name="mdi-account-hard-hat" />
+              </q-item-section>
+
+              <q-item-section>
+                Engineer
+              </q-item-section>
+            </q-item>
+
+            <q-item clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon name="group_work" />
+              </q-item-section>
+
+              <q-item-section>
+                Dealer
+              </q-item-section>
+            </q-item>
+
+          </q-list>
+        </q-scroll-area>
+        <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
+          <div class="absolute-bottom bg-transparent">
+            <!-- <q-avatar size="56px" class="q-mb-sm">
+              <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+            </q-avatar> -->
+          </div>
+        </q-img>
+      </q-drawer>
 
     <q-page-container>
       <router-view />
@@ -98,3 +130,8 @@ export default {
   }
 }
 </script>
+
+<style lang="sass" scoped>
+.menu-list .q-item
+  border-radius: 0 32px 32px 0
+</style>
