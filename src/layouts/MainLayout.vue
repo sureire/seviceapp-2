@@ -48,17 +48,18 @@
       >
         <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
           <q-list padding class="menu-list">
-            <q-item clickable v-ripple @click="$store.commit('setLoginType','User')">
+            <q-item v-for="item in MenuList" :key="item.name" :name="item.name"  :active="item.active" 
+            clickable v-ripple @click="onMenuClick(item)" active-class="bg-teal-1 text-primary" >
               <q-item-section avatar>
-                <q-icon name="mdi-account" />
+                <q-icon :name="item.icon" />
               </q-item-section>
 
               <q-item-section>
-                User
+                {{item.name}}
               </q-item-section>
             </q-item>
 
-            <q-item active clickable v-ripple @click="$store.commit('setLoginType','Provider')">
+            <!-- <q-item active clickable v-ripple @click="$store.commit('setLoginType','Provider')">
               <q-item-section avatar>
                 <q-icon name="mdi-account-hard-hat" />
               </q-item-section>
@@ -76,7 +77,7 @@
               <q-item-section>
                 Dealer
               </q-item-section>
-            </q-item>
+            </q-item> -->
 
           </q-list>
         </q-scroll-area>
@@ -103,9 +104,37 @@ export default {
   data () {
     return {
       leftDrawerOpen: false,
+      selectedmenu: null,
+      MenuList:
+            [
+        {
+          name: 'User',
+          icon: 'mdi-account',
+          active: false,
+          link: '/#/cities'
+        },
+        {
+          name: 'Engineer',
+          icon: 'mdi-account-hard-hat',
+          active: false,
+          link: '/#/category'
+        },
+        {
+          name: 'Dealer',
+          icon: 'group_work',
+          active: false,
+          link: '/#/newengineers'
+        }]
     }
   },
   methods:{
+    onMenuClick(item){
+        if (this.selectedmenu)
+          this.selectedmenu.active =false
+        item.active=true
+        this.selectedmenu = item
+        this.$store.commit('setLoginType',item.name)
+    },
         onLogin(){
       this.$router.push('/login')
     },

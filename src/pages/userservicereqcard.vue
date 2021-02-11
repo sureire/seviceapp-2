@@ -4,7 +4,10 @@
   <q-item >
         <q-item-section>
           <q-item-label overline>Date: {{request.requestdate}}</q-item-label>
-          <q-item-label>{{request.name}}</q-item-label>
+          <q-item-label>{{request.category}}</q-item-label>
+          <q-item-label>
+            <q-icon name="place"/>
+            {{request.location}}</q-item-label>
           <q-item-label caption>Availability: {{request.preferedtimeslot}}</q-item-label>
           <div v-if="request.emergency">
               <q-chip outline color="red" size="sm" text-color="white" icon="notification_important">

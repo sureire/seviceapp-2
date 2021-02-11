@@ -4,6 +4,13 @@
         New Service Request for {{$store.state.selectedservice}}
     </q-chip>
     <div  class="q-pa-md" style="max-width: 350px">
+        <div v-if= "!userid">
+            <q-input  v-model="username" label="Name" />
+            <q-input  v-model="mobile" label="Mobile" 
+                lazy-rules :rules="[ val => val && val.length > 0 || 'Please enter a valid Mobile no.']"
+                    />
+        </div>
+
         <q-input  v-model="newRequest.requestdate" label="Requested Date" mask="date" :rules="['date']">
         <template v-slot:append>
             <q-icon name="event" class="cursor-pointer">
@@ -23,6 +30,9 @@
         <div class="q-pa-xs">
             <q-btn icon="add_alert" label="Create" color="primary" @click="onCreate"/>
         </div>
+        <q-dialog v-model="enableotp" persistent transition-show="scale" transition-hide="scale">
+             <otpform text='Enter OTP for login' @success="onOtpSuccess"/>
+        </q-dialog>
     </div>
 
   </q-page>
@@ -30,8 +40,15 @@
 
 <script>
 export default {
+    components :{
+        'otpform' : require('components/otpform.vue').default
+    },    
     data() {
         return {
+            enableotp: false,
+            userid: this.$store.state.selectedUser.id,
+            username: null,
+            mobile: null,
             newRequest :{
                 userid: this.$store.state.selectedUser.id,
                 category: this.$store.state.selectedservice,
@@ -47,7 +64,44 @@ export default {
     },
 
     methods: {
+        onOtpSuccess(){
+            this.enableotp= false
+            if (!this.userid) {
+                this.$http.get(`${process.env.HOSTNAME}/users/${this.mobile}`)
+                .then(response => {
+                    console.log(response.data)
+                    if (response.data){
+                        this.CreateRequest()
+                    }
+                })
+                .catch(err => {
+                    let newuser = {
+                        name: this.username,
+                        email:'',
+                        mobile:this.mobile
+                    }
+                    this.$http.post(`${process.env.HOSTNAME}/user`, newuser)
+                        .then(Response => {
+                            this.$store.commit('setSelectedUser',Response.data)
+                            this.newRequest.userid = Response.data.id
+                            this.CreateRequest()
+                        })
+                        .catch(err => {
+                            throw(err)
+                        })
+
+                })
+
+            }
+        },
         onCreate(){
+            if (!this.userid) {
+                this.enableotp = true;
+                return
+            }
+            this.CreateRequest()
+        },
+        CreateRequest(){
             this.$http.post(process.env.HOSTNAME + '/srequest', this.newRequest)
             .then(Response => {
                 this.$store.commit('setSelectedProvider',Response.data)
@@ -57,6 +111,9 @@ export default {
                 throw(err)
             })
         }
+    },
+    mounted() {
+        console.log('userid is ' + this.userid)
     }
 
 }

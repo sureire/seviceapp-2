@@ -1,5 +1,5 @@
 <template>
-  <q-page class="screencenter">
+  <q-page class="constrain-more q-pa-md">
      <!-- <div class="q-pa-md" style="max-width: 500px"> -->
     <div  >
         <!-- <div class="self-center" style="max-width: 500px"> -->
