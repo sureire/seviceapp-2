@@ -4,7 +4,7 @@
         New Service Request for {{$store.state.selectedservice}}
     </q-chip>
     <div  class="q-pa-md" style="max-width: 350px">
-        <div v-if= "!userid">
+        <div v-if= "!userid || $store.state.usertype === 'Dealer'">
             <q-input  v-model="username" label="Name" />
             <q-input  v-model="mobile" label="Mobile" 
                 lazy-rules :rules="[ val => val && val.length > 0 || 'Please enter a valid Mobile no.']"
@@ -57,7 +57,8 @@ export default {
                 status: 'pending',
                 preferedtimeslot: '',
                 emergency: false,
-                description: ''
+                description: '',
+                createdby: null
             },
             timeslot :['Morning', 'Afternoon', 'Evening' ] 
         }
@@ -75,21 +76,7 @@ export default {
                     }
                 })
                 .catch(err => {
-                    let newuser = {
-                        name: this.username,
-                        email:'',
-                        mobile:this.mobile
-                    }
-                    this.$http.post(`${process.env.HOSTNAME}/user`, newuser)
-                        .then(Response => {
-                            this.$store.commit('setSelectedUser',Response.data)
-                            this.newRequest.userid = Response.data.id
-                            this.CreateRequest()
-                        })
-                        .catch(err => {
-                            throw(err)
-                        })
-
+                        this.CreateNewUserandAddRequest()
                 })
 
             }
@@ -99,17 +86,50 @@ export default {
                 this.enableotp = true;
                 return
             }
-            this.CreateRequest()
+            if (this.$store.state.usertype === 'Dealer'){
+                this.newRequest.createdby = this.userid
+                this.CreateNewUserandAddRequest()
+            }
+            else
+                this.CreateRequest()
         },
         CreateRequest(){
             this.$http.post(process.env.HOSTNAME + '/srequest', this.newRequest)
             .then(Response => {
-                this.$store.commit('setSelectedProvider',Response.data)
+                //this.$store.commit('setSelectedProvider',Response.data)
                 this.$router.push('/userrequests')
+                this.showNotify()
             })
             .catch(err => {
                 throw(err)
             })
+        },
+        CreateNewUserandAddRequest(){
+            let newuser = {
+                name: this.username,
+                email:'',
+                mobile:this.mobile,
+                usertype:1
+            }
+            this.$http.post(`${process.env.HOSTNAME}/user`, newuser)
+                .then(Response => {
+                    if (this.$store.state.usertype !== 'Dealer')
+                        this.$store.commit('setSelectedUser',Response.data)
+                    this.newRequest.userid = Response.data.id
+                    this.CreateRequest()
+
+                })
+                .catch(err => {
+                    throw(err)
+                })
+        },
+        showNotify(){
+                this.$q.notify({
+                    caption: 'Service Created',
+                    message: 'A new Service Request was created. A Professional would soon contact you..',
+                    icon: 'announcement',
+                    timeout: 5000
+                })
         }
     },
     mounted() {

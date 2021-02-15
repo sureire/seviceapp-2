@@ -1,53 +1,6 @@
 
 <template>
-    <div class="screencenter">
-        <div v-if="register" >
-            <q-form
-            @submit.prevent="onSubmit"
-            @reset="onReset"
-            class="q-pa-md"
-            >
-                <!-- <q-field rounded filled  stack-label>
-                    <template v-slot:control>
-                    <div class="self-center full-width no-outline" tabindex="0">Register a Provider</div>
-                    </template>
-                </q-field> -->
-                <q-chip square size="18px" color="deep-orange-3" text-color="black" icon="login">
-                    {{usertype}} Login
-                </q-chip>
-                <q-input
-                    outlined
-                    v-model="provider.name"
-                    ref = "name"
-                    label="Your Name"
-                    lazy-rules
-                    :rules="[ val => val && val.length > 0 || 'Please type your name']"
-                />
-                <q-input
-                    outlined
-                    ref = "email"
-                    v-model="provider.email"
-                    label="Email"
-                    lazy-rules
-                    :rules="[ val => val && val.length > 0 && validEmail(this.provider.email)|| 'Please type your email']"
-                />
-                <q-input
-                    outlined
-                    ref = "mobile"
-                    v-model="provider.mobile"
-                    label="Mobile No."
-                    lazy-rules
-                    :rules="[ val => val && val.length > 0  && validMobile(this.provider.mobile)|| 'Please enter a valid Mobile no.']"
-                />
-                <q-btn color="primary" type="submit" label="Register" />
-                <q-dialog v-model="enableotp" persistent transition-show="scale" transition-hide="scale">
-                    <otpform text='Enter OTP for login' @success="onOtpSuccess"/>
-                </q-dialog>
-            </q-form>
-
-        </div>
-        <div v-else class="q-pa-md" style="max-width: 400px">
-            <q-card class="q-pa-md">
+    <form class="q-pa-md" @submit.prevent="onSubmit">
             <q-chip square size="18px" color="blue-grey-2" text-color="black" icon="login">
                 {{usertype}} Login
             </q-chip>
@@ -60,37 +13,15 @@
                     lazy-rules
                     :rules="[ val => val && val.length > 0  && validMobile(this.provider.mobile)|| 'Please enter a valid Mobile no.']"
                 />
-                <div >
-                    <q-btn rounded icon="login" color="primary" label="Login" @click="onLogon"/>
+                <div class="row" >
+                    <q-space/>
+                    <q-btn rounded icon="login" color="primary" label="Login" type="submit"/>
                 </div>
-            <q-separator spaced="md"/>
             <q-dialog v-model="enableotp" persistent transition-show="scale" transition-hide="scale">
                 <otpform text='Enter OTP for login' @success="onOtpSuccess"/>
             </q-dialog>
-            <q-banner rounded class="bg-white text-black">
-                <span class="q-pa-md">New Provider click </span>
-                <!-- <template v-slot:action> -->
-                    <q-btn rounded icon="person_add" color="primary" label="Register" @click="register=true"/>
-                <!-- </template> -->
-            </q-banner>
-            </q-card>
-        </div>
-        <q-dialog v-model="alert">
-                <q-card>
-                    <q-card-section>
-                    <div class="text-h6">Alert</div>
-                    </q-card-section>
 
-                    <q-card-section class="q-pt-none">
-                        Mobile not registered!! Please Register
-                    </q-card-section>
-
-                    <q-card-actions align="right">
-                    <q-btn flat label="OK" color="primary" v-close-popup />
-                    </q-card-actions>
-                </q-card>
-        </q-dialog>
-    </div>
+    </form>
 </template>
 
 
@@ -99,14 +30,13 @@ export default {
     components :{
         'otpform' : require('components/otpform.vue').default
     },
+    props: ['usertype' ],
 
 data() {
     return {
         alert: false,
-        register: false,
         duplicate: false,
         enableotp:false,
-        usertype: '',
         provider: {
             name:'',
             email:'',
@@ -114,89 +44,88 @@ data() {
         }
     }
 },
-mounted() {
-    this.usertype = this.$store.state.usertype
-},
+
 computed: {
 
 },
 methods: {
         onSubmit(){
-            if (this.$refs.name.hasError || this.$refs.email.hasError || this.$refs.mobile.hasError) {
-                this.alert=true
+            if (this.$refs.mobile.hasError) {
+                this.showNotifyError()
+                return
+            }
+            if (!this.provider.mobile){
+                this.showNotifyError('Mobile number empty')
                 return
             }
             this.enableotp = true
         },
-        onRegister(){
-            if (this.usertype === 'Provider'){
-                console.log(`${process.env.HOSTNAME}/providers/${this.provider.mobile}`)
-                this.$http.get(`${process.env.HOSTNAME}/providers/${this.provider.mobile}`)
-                .then(response => {
-                    console.log(response.data)
-                    if (response.data){
-                        this.$q.dialog({
-                        title: 'Alert',
-                        message: 'Mobile already registered! Check with the Admin'
-                        })
-                    }
-                })
-                .catch(err => {
-                        this.$http.post(`${process.env.HOSTNAME}/provider`, this.provider)
-                        .then(Response => {
-                            this.$q.dialog({
-                                title: 'Alert',
-                                message: 'Account Registered !!. Check with VplusU Admin to activate the account'
-                                })
-                            // this.$store.commit('setSelectedProvider',Response.data)
-                            // this.$router.push('/')
-                        })
-                        .catch(err => {
-                            throw(err)
-                        })
-                })
-            }
-            else {
-                console.log(`${process.env.HOSTNAME}/users/${this.provider.mobile}`)
-                this.$http.get(`${process.env.HOSTNAME}/users/${this.provider.mobile}`)
-                .then(response => {
-                    console.log(response.data)
-                    if (response.data){
-                        this.$q.dialog({
-                        title: 'Alert',
-                        message: 'Mobile already registered! Check with the Admin'
-                        })
-                    }
-                    else {
-                        this.$http.post(`${process.env.HOSTNAME}/user`, this.provider)
-                        .then(Response => {
-                            this.$store.commit('setSelectedUser',Response.data)
-                            this.$router.push('/')
-                        })
-                        .catch(err => {
-                            throw(err)
-                        })
-                    }
-                })
-            }
-        },
+        // onRegister(){
+        //     if (this.usertype === 'Engineer'){
+        //         console.log(`${process.env.HOSTNAME}/providers/${this.provider.mobile}`)
+        //         this.$http.get(`${process.env.HOSTNAME}/providers/${this.provider.mobile}`)
+        //         .then(response => {
+        //             console.log(response.data)
+        //             if (response.data){
+        //                 this.$q.dialog({
+        //                 title: 'Alert',
+        //                 message: 'Mobile already registered! Check with the Admin'
+        //                 })
+        //             }
+        //         })
+        //         .catch(err => {
+        //                 this.$http.post(`${process.env.HOSTNAME}/provider`, this.provider)
+        //                 .then(Response => {
+        //                     this.showNotify()
+        //                     this.$q.dialog({
+        //                         title: 'Alert',
+        //                         message: 'Account Registered !!. Check with VplusU Admin to activate the account'
+        //                         })
+        //                     // this.$store.commit('setSelectedProvider',Response.data)
+        //                     // this.$router.push('/')
+        //                 })
+        //                 .catch(err => {
+        //                     throw(err)
+        //                 })
+        //         })
+        //     }
+        //     else {
+        //         console.log(`${process.env.HOSTNAME}/users/${this.provider.mobile}`)
+        //         this.$http.get(`${process.env.HOSTNAME}/users/${this.provider.mobile}`)
+        //         .then(response => {
+        //             console.log(response.data)
+        //             if (response.data){
+        //                 this.$q.dialog({
+        //                 title: 'Alert',
+        //                 message: 'Mobile already registered! Check with the Admin'
+        //                 })
+        //             }
+        //             else {
+        //             }
+        //         })
+        //         .catch(err => {
+        //                 this.$http.post(`${process.env.HOSTNAME}/user`, this.provider)
+        //                 .then(Response => {
+        //                     this.showNotify()
+        //                     this.$store.commit('setSelectedUser',Response.data)
+        //                     this.$router.push('/')
+        //                 })
+        //                 .catch(err => {
+        //                     throw(err)
+        //                 })
+        //         })
+        //     }
+        // },
         onReset() {
 
         },
-        onLogon(){
-            if (!this.provider.mobile)
-                return
-            this.enableotp = true
-            console.log('enableotp is ' + this.enableotp)
-        },
+
         onOtpSuccess() {
             this.enableotp = false
-            if (this.register)
-                this.onRegister()
-            else {
-                if (this.usertype == 'User'){
+                if (this.usertype == 'User' || this.usertype == 'Dealer'){
                     this.$http.get(`${process.env.HOSTNAME}/users/${this.provider.mobile}`)
                     .then(response => {
+                        this.$q.notify('User ' + response.data.name + ' logged in!!')
                         this.$store.commit('setSelectedUser',response.data)
                         if (this.$store.state.selectedservice)
                             this.$router.push('/newrequest')    
@@ -206,7 +135,7 @@ methods: {
                         }
                     })
                     .catch(err => {
-                        this.alert = true
+                        this.showNotifyError('User Mobile not registered !! Click Register')
                         //throw(err)
                     })
                 }
@@ -218,10 +147,9 @@ methods: {
                     })
                     .catch(err => {
                         //throw(err)
-                        this.alert = true
+                        this.showNotifyError('Engineer Mobile not registered !! Click Register')
                     })
                 }
-            }
         },
         validEmail(email) {
         let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -230,7 +158,24 @@ methods: {
         validMobile(mobile) {
             return (/^\d{10}$/).test(mobile);
         },
-        
+        showNotify(){
+                this.$q.notify({
+                    progress: true,
+                    caption: 'Registration',
+                    message: this.provider.name + ' successfully registered in VplusU',
+                    icon: 'announcement',
+                    timeout: 5000
+                })
+        },
+        showNotifyError(msg){
+                this.$q.notify({
+                    position: 'top',
+                    color: 'negative',
+                    message: msg,
+                    icon: 'report_problem',
+                    timeout: 5000
+                })            
+        },
         DuplicateCheck(){
             console.log(this.register)
 

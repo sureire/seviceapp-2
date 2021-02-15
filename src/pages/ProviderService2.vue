@@ -1,5 +1,5 @@
 <template>
-        <q-page padding>
+        <q-page padding class="constrain-more">
           <div v-if="services.length" class="q-pa-md">
             <service v-for="s in services"
                 :key="s.id"

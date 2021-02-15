@@ -1,5 +1,5 @@
 <template>
-  <q-page padding class="q-pa-md">
+  <q-page padding class="q-pa-md constrain-more">
     <q-card class="my-card q-pa-md">
       <q-card-section class="bg-primary text-white" align="right">
         <div class="text-subtitle2">Wallet Balance</div>
@@ -40,6 +40,7 @@ methods: {
             console.log('newamount is ' + newamount)
             this.$http.put(process.env.HOSTNAME + '/provider', {id: this.provider.id, amount: newamount})
             .then(res=>{
+                this.$q.notify('Wallet updated for Engineer ' + this.provider.name + ' with amount $' + newamount)
                 this.provider.walletbalance = newamount
                 this.$store.commit('setSelectedProvider', this.provider) 
                 this.amount = null

@@ -17,8 +17,8 @@
 
         
       </q-toolbar>
-      <div v-if="$store.state.usertype === 'User'">
-        <q-tabs  no-caps v-model="$store.state.selectedTab" class="bg-grey-3 text-black shadow 2">
+      <div v-if="$store.state.usertype === 'User' || $store.state.usertype === 'Dealer'">
+        <q-tabs  no-caps dense v-model="$store.state.selectedTab" class="bg-teal text-grey-5 shadow-2" active-color="white">
           <q-tab v-if="!$store.state.selectedUser.name" name="LoginUser" icon="login" label="Login" @click="onLogin" />
           <q-tab v-if="$store.state.selectedUser.name" name="Person" icon="person" @click="onLogin">
             {{$store.state.selectedUser.name}}
@@ -28,7 +28,7 @@
         </q-tabs>
       </div>
       <div v-else>
-        <q-tabs  no-caps dense class="bg-grey-3 text-black shadow 2">
+        <q-tabs  no-caps dense class="bg-teal text-grey-5 shadow-2" active-color="white">
           <q-tab v-if="!$store.state.selectedProvider.name" name="Loginprovider" icon="login" label="Login" @click="onLogin" />
           <q-tab v-if="$store.state.selectedProvider.name" name="Person" icon="person" @click="onLogin">
             {{$store.state.selectedProvider.name.substring(0,8)}}
@@ -134,9 +134,12 @@ export default {
         item.active=true
         this.selectedmenu = item
         this.$store.commit('setLoginType',item.name)
+        console.log(this.$router.name)
+        const path = `/Pageauth`
+        if (this.$route.path !== path) this.$router.push(path)
     },
         onLogin(){
-      this.$router.push('/login')
+      this.$router.push('/Pageauth')
     },
     onSearch(){
       this.$router.push('/')
@@ -145,7 +148,7 @@ export default {
       if (this.$store.state.selectedProvider)
         this.$router.push('/providerservices')
       else
-        this,$router.push('/login')
+        this,$router.push('/Pageauth')
     },
     onChangeType() {
       if (this.$store.state.usertype === 'User')
@@ -156,6 +159,14 @@ export default {
   },
   mounted() {
       this.$store.commit('setLoginType',process.env.USERTYPE)
+      this.$q.notify.setDefaults({
+        position: 'top',
+        timeout: 5000,
+        textColor: 'white',
+        icon: 'announcement',
+        progress: true,
+        actions: [{ icon: 'close', color: 'white' }]
+      })
   }
 }
 </script>

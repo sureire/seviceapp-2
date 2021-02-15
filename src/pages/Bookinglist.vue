@@ -1,5 +1,5 @@
 <template>
-  <q-page padding>
+  <q-page padding class="constrain-more ">
     <div v-if="$store.state.BookingList" class="q-pa-md">
         <bookingcard v-for="r in $store.state.BookingList"
             :key="r.id"

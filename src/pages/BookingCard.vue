@@ -1,5 +1,4 @@
 <template>
-    <div class="q-pa-md">
     <q-card class="my-card" bordered>
           <q-item>
             <q-item-section avatar>
@@ -15,10 +14,11 @@
                 {{service.name}}
               </q-item-label>
             </q-item-section>
-            <q-card-actions align="right">
+            <q-card-actions >
               <div v-if="service.status === 'in progress'" >
-              <q-btn flat round color="light-green" icon="done" @click="onDone"/>
-              <q-btn flat round color="red" icon="clear" @click="onCancel" />
+                <q-btn size="md" round color="light-green" icon="done" @click="onDone" style="margin-bottom: 5px"/>
+                <q-space/>
+                <q-btn size="md" round color="red" icon="clear" @click="onCancel" />
               </div>
               <div v-else>
                 <q-btn v-if="service.status === 'pending'" round color="primary" icon="add" @click="addRequest"/>
@@ -47,22 +47,27 @@
               </q-chip>
 
           </div>
-            <q-badge color="blue">
+            <q-badge :color="service.color">
               {{service.status}}
             </q-badge>         
             </q-card-section>
           </q-card-section>
-
+          <q-dialog v-model="enableotp" persistent transition-show="scale" transition-hide="scale">
+                <otpform text='Enter OTP for login' @success="onOtpSuccess"/>
+          </q-dialog>
         </q-card>
-    </div>
 </template>
 
 <script>
 export default {
+    components :{
+        'otpform' : require('components/otpform.vue').default
+    },  
 props :['service' ],
 data(){
   return {
-    cancelreason: ''
+    cancelreason: '',
+    enableotp:false
   }
 },
 methods :{
@@ -85,8 +90,10 @@ methods :{
         console.log('newamount is ' + newamount)
         this.$http.put(process.env.HOSTNAME + '/provider', {id: this.$store.state.selectedProvider.id, amount: newamount})
         .then(res=>{
+            this.$q.notify('Wallet updated to ' + newamount + ' for Engineer ' + this.$store.state.selectedProvider.name)
             this.$http.get(process.env.HOSTNAME + '/provider/' + this.$store.state.selectedProvider.id)
             .then(res => {
+                console.log('Provider ' + res.data)
                 this.$store.commit('setSelectedProvider', res.data) 
                 this.$store.dispatch('getBookingList', this.$store.state.selectedProvider.id)
             })
@@ -106,37 +113,36 @@ methods :{
           title: 'Cancel Service',
           message: 'Reason for cancelling',
           prompt: {
-            model: this.cancelreason,
+            model: '',
             isvalid: val => val.length > 5,
             type: 'text'
           },
           cancel: true,
           persistent: true
-        }).onOk(() => {
-          let cstatus = {
-              id: this.service.id, 
-              serviceprovider: this.$store.state.selectedProvider.id,
-              status:'cancelled', 
-              statusdescription: this.cancelreason
-          }
-          console.log(cstatus)
-              this.$http.put(`${process.env.HOSTNAME}/srequest/${this.service.id}`,cstatus)
-              .then(response => {
-                  console.log(response.data)
-                  this.$store.dispatch('getBookingList', this.$store.state.selectedProvider.id)
-              })
+        }).onOk(data => {
+          alert(data)
+          this.updateStatus('cancelling:' + data)
         })
     },
     onDone(){
-        let supdate = {
-          id: this.service.id,
-          serviceprovider: this.$store.state.selectedProvider.id,
-          status:'completed'
-        }
-        this.$http.put(`${process.env.HOSTNAME}/srequest/${this.service.id}`,supdate)
-        .then(response => {
-           this.$store.dispatch('getBookingList', this.$store.state.selectedProvider.id)
-        })
+      this.enableotp = true;
+    },
+    onOtpSuccess(){
+      this.updateStatus('completed')
+    },
+    updateStatus(status){
+          let cstatus = {
+              id: this.service.id, 
+              serviceprovider: this.$store.state.selectedProvider.id,
+              status:status
+          }
+          console.log(cstatus)
+          this.$http.put(`${process.env.HOSTNAME}/srequest/${this.service.id}`,cstatus)
+          .then(response => {
+              this.$q.notify('Status changed to ' + status + ' successfully..')
+              console.log(response.data)
+              this.$store.dispatch('getBookingList', this.$store.state.selectedProvider.id)
+          })
     }
   }
 }

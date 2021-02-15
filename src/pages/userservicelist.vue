@@ -30,7 +30,10 @@ export default {
         }
    },
    mounted() {
-      this.$http.get(`${process.env.HOSTNAME}/srequest_user/${this.$store.state.selectedUser.id}`)
+     let url = 'srequest_user'
+     if (this.$store.state.usertype === 'Dealer')
+        url = 'dealersr'
+      this.$http.get(`${process.env.HOSTNAME}/${url}/${this.$store.state.selectedUser.id}`)
       .then(response => {
           this.services = response.data
       })

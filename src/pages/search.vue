@@ -13,7 +13,10 @@
               <q-icon name="construction" />
             </template>
           </q-select>
-          <q-btn color="primary" align="right" icon="search" @click.stop="search()" label="Search" />
+          <div class="row">
+            <q-space/>
+            <q-btn color="primary" align="right" icon="search" @click.stop="search()" label="Search" />
+          </div>
       <!-- </div> -->
    </div>
      <!-- <div class="q-gutter-md" v-if="showlogin">

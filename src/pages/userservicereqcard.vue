@@ -3,6 +3,9 @@
 <q-card >
   <q-item >
         <q-item-section>
+          <div v-if="request.name">
+            <q-item-label> {{request.name}}</q-item-label>  
+          </div>
           <q-item-label overline>Date: {{request.requestdate}}</q-item-label>
           <q-item-label>{{request.category}}</q-item-label>
           <q-item-label>
