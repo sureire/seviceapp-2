@@ -5,6 +5,9 @@
         <q-card-section class="q-pt-xs">
           <div class="text-h5 q-mt-sm q-mb-xs">{{service.name}}</div>
           <div class="text-overline">{{service.category}}</div>
+          <q-item-label>
+            <q-icon name="place"/>
+            {{service.location}}</q-item-label>          
         </q-card-section>
 
         <q-card-section class="col-5 flex flex-center">
@@ -17,14 +20,14 @@
 
       <q-separator />
 
-      <q-card-actions align="around">
+      <!-- <q-card-actions align="around">
         <q-btn flat round icon="place">
             {{service.location}}
         </q-btn>
         <div v-if="usertype === 'User'">
         <q-btn icon="add" @click="addRequest">Add</q-btn>
         </div>
-      </q-card-actions>
+      </q-card-actions> -->
     </q-card>
     </div>
 </template>

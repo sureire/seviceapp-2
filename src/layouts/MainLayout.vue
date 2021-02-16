@@ -14,25 +14,30 @@
         <q-toolbar-title>
           VplusU
         </q-toolbar-title>
-
-        
+        <q-space />
+        <q-field dark borderless>
+          <template v-slot:control>
+            <div class="self-center no-outline" tabindex="0">{{showSelectedPerson}}</div>
+          </template>
+        </q-field>
+                
       </q-toolbar>
       <div v-if="$store.state.usertype === 'User' || $store.state.usertype === 'Dealer'">
         <q-tabs  no-caps dense v-model="$store.state.selectedTab" class="bg-teal text-grey-5 shadow-2" active-color="white">
-          <q-tab v-if="!$store.state.selectedUser.name" name="LoginUser" icon="login" label="Login" @click="onLogin" />
-          <q-tab v-if="$store.state.selectedUser.name" name="Person" icon="person" @click="onLogin">
+          <q-tab name="LoginUser" icon="login" label="Login" @click="onLogin" />
+          <!-- <q-tab v-if="$store.state.selectedUser.name" name="Person" icon="person" @click="onLogin">
             {{$store.state.selectedUser.name}}
-          </q-tab>
+          </q-tab> -->
           <q-tab name="Search" icon="search" label="Search" @click="onSearch" />
           <q-tab name="Services" icon="toys" label="My List" @click="$router.push('/userrequests')" />
         </q-tabs>
       </div>
       <div v-else>
-        <q-tabs  no-caps dense class="bg-teal text-grey-5 shadow-2" active-color="white">
-          <q-tab v-if="!$store.state.selectedProvider.name" name="Loginprovider" icon="login" label="Login" @click="onLogin" />
-          <q-tab v-if="$store.state.selectedProvider.name" name="Person" icon="person" @click="onLogin">
+        <q-tabs  no-caps dense v-model="$store.state.selectedTab" class="bg-teal text-grey-5 shadow-2" active-color="white">
+          <q-tab name="Loginprovider" icon="login" label="Login" @click="onLogin" />
+          <!-- <q-tab v-if="$store.state.selectedProvider.name" name="Person" icon="person" @click="onLogin">
             {{$store.state.selectedProvider.name.substring(0,8)}}
-          </q-tab>
+          </q-tab> -->
           <q-tab name="MyServices" icon="engineering" label="Services" @click="onServices" />
           <q-tab name="Bookinglist" icon="receipt_long" label="Booking List" @click="$router.push('/bookinglist')" />
           <q-tab name="Wallet" icon="attach_money" label="Wallet" @click="$router.push('/wallet')"/>
@@ -127,6 +132,14 @@ export default {
         }]
     }
   },
+  computed:{
+    showSelectedPerson(){
+        if (this.$store.state.usertype === 'User' || this.$store.state.usertype === 'Dealer')
+          return this.$store.state.selectedUser.name
+        else 
+          return this.$store.state.selectedProvider.name
+    }
+  },
   methods:{
     onMenuClick(item){
         if (this.selectedmenu)
@@ -142,7 +155,7 @@ export default {
       this.$router.push('/Pageauth')
     },
     onSearch(){
-      this.$router.push('/')
+      this.$router.push('/search')
     },
     onServices(){
       if (this.$store.state.selectedProvider)

@@ -1,9 +1,9 @@
 <template>
-  <q-page padding>
+  <q-page padding class="constrain-more">
       <q-form >
             <q-field rounded filled  stack-label>
                 <template v-slot:control>
-                <div class="self-center full-width no-outline" tabindex="0">Add a Service</div>
+                <div class="self-center full-width " tabindex="0">Add a Service</div>
                 </template>
             </q-field>
             <q-separator spaced="md"/>

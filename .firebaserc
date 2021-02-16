@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "vplusu-4b649"
+  },
+  "targets": {
+    "vplusu-4b649": {
+      "hosting": {
+        "app": [
+          "vplusu-4b649"
+        ]
+      }
+    }
   }
 }

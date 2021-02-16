@@ -1,4 +1,5 @@
 <template>
+   <div class="q-pa-sm"> 
     <q-card class="my-card" bordered>
           <q-item>
             <q-item-section avatar>
@@ -56,6 +57,7 @@
                 <otpform text='Enter OTP for login' @success="onOtpSuccess"/>
           </q-dialog>
         </q-card>
+   </div>
 </template>
 
 <script>

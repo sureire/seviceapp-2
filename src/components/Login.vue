@@ -127,12 +127,14 @@ methods: {
                     .then(response => {
                         this.$q.notify('User ' + response.data.name + ' logged in!!')
                         this.$store.commit('setSelectedUser',response.data)
-                        if (this.$store.state.selectedservice)
-                            this.$router.push('/newrequest')    
-                        else{
-                            this.$store.commit('setSelectedTab','Services')
-                            this.$router.push('/userrequests')            
-                        }
+                        this.$store.commit('setSelectedTab','Search')
+                        this.$router.push('/search')
+                        // if (this.$store.state.selectedservice)
+                        //     this.$router.push('/newrequest')    
+                        // else{
+                        //     this.$store.commit('setSelectedTab','Services')
+                        //     this.$router.push('/userrequests')            
+                        // }
                     })
                     .catch(err => {
                         this.showNotifyError('User Mobile not registered !! Click Register')
@@ -143,6 +145,7 @@ methods: {
                     this.$http.get(`${process.env.HOSTNAME}/providers/${this.provider.mobile}`)
                     .then(response => {
                         this.$store.commit('setSelectedProvider',response.data)
+                        this.$store.commit('setSelectedTab','MyServices')
                         this.$router.push('/providerservices')            
                     })
                     .catch(err => {

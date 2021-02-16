@@ -20,7 +20,7 @@
         </q-item-section>
 
         <q-item-section side bottom>
-            <q-badge color="blue">
+            <q-badge :color="request.color">
               {{request.status}}
             </q-badge>
           <!-- <q-item-label caption>Status: {{request.status}}</q-item-label> -->

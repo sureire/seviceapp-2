@@ -1,5 +1,5 @@
 <template>
-  <q-page padding>
+  <q-page padding class="constrain-more">
     <div v-if="services.length" class="q-pa-sm">
         <span><h3> {{services.length}} </h3> <h5>service found for {{this.$store.state.selectedservice}}</h5></span>
         <div class="q-gutter-sm">
