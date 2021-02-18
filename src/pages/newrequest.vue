@@ -111,17 +111,21 @@ export default {
                 mobile:this.mobile,
                 usertype:1
             }
-            this.$http.post(`${process.env.HOSTNAME}/user`, newuser)
-                .then(Response => {
-                    if (this.$store.state.usertype !== 'Dealer')
-                        this.$store.commit('setSelectedUser',Response.data)
-                    this.newRequest.userid = Response.data.id
+            //first check if the customer aleady exists
+            this.$http.get(`${process.env.HOSTNAME}/users/${this.mobile}`)
+                .then(response => {  
+                    this.newRequest.userid = response.data.id
                     this.CreateRequest()
-
-                })
-                .catch(err => {
-                    throw(err)
-                })
+                 })
+                 .catch(err => {
+                    this.$http.post(`${process.env.HOSTNAME}/user`, newuser)
+                    .then(Response => {
+                        if (this.$store.state.usertype !== 'Dealer')
+                            this.$store.commit('setSelectedUser',Response.data)
+                        this.newRequest.userid = Response.data.id
+                        this.CreateRequest()
+                    })
+                 })
         },
         showNotify(){
                 this.$q.notify({

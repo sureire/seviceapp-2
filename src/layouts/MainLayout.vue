@@ -171,7 +171,7 @@ export default {
     }
   },
   mounted() {
-      this.$store.commit('setLoginType',process.env.USERTYPE)
+      this.$store.commit('setLoginType','User')
       this.$q.notify.setDefaults({
         position: 'top',
         timeout: 5000,
@@ -180,6 +180,9 @@ export default {
         progress: true,
         actions: [{ icon: 'close', color: 'white' }]
       })
+  },
+  updated() {
+    //this.$router.push('/search')
   }
 }
 </script>
