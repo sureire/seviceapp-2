@@ -172,6 +172,8 @@ export default {
   },
   mounted() {
       this.$store.commit('setLoginType','User')
+      this.$router.push('/search')
+      this.$store.commit('setSelectedTab','Search') 
       this.$q.notify.setDefaults({
         position: 'top',
         timeout: 5000,
@@ -182,7 +184,8 @@ export default {
       })
   },
   updated() {
-    //this.$router.push('/search')
+    // this.$router.push('/search')
+    // this.$store.commit('setSelectedTab','Search')
   }
 }
 </script>

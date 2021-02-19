@@ -1,5 +1,5 @@
 <template>
-  <q-page padding class="q-gutter-md">
+  <q-page padding class="constrain-more">
     <q-chip size="18px" icon="bookmark">
         New Service Request for {{$store.state.selectedservice}}
     </q-chip>
@@ -27,6 +27,7 @@
         <q-input v-model="newRequest.description" label="Service Description" />
         <q-select class="q-pa-xs" v-model="newRequest.preferedtimeslot" :options="timeslot" label="Pick a TimeSlot" />
         <q-toggle class="q-pa-md" v-model="newRequest.emergency" color="red" label="Emergency" />
+
         <div class="q-pa-xs">
             <q-btn icon="add_alert" label="Create" color="primary" @click="onCreate"/>
         </div>

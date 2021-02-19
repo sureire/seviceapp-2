@@ -12,6 +12,13 @@
           <q-input class="col" v-model="amount" type="number" prefix="$" align="left"/>
         <q-btn class="col" color="primary" outline icon="add" @click="onAdd">Add & Pay </q-btn>
       </q-card-actions>
+      <q-card-section>
+          <div v-if="testMode">
+              <p>use Visa: 4111 1111 1111 1111 </p>
+              <p>Exp: 12/21</p>
+              <p>CVV: 123 </p>
+          </div>
+      </q-card-section>
     </q-card>      
   </q-page>
 </template>
@@ -31,6 +38,11 @@ data(){
           phone: null,
           status: null
         }
+    }
+},
+computed : {
+    testMode(){
+      return process.env.RAYZORPAYMODE === 'Test'
     }
 },
 methods: {
@@ -85,7 +97,7 @@ methods: {
     verifySignature(response){
         this.$http.post(`${process.env.HOSTNAME}/verifyPayment`,response)
         .then(res => {
-            alert("payment received")
+            this.$q.notify('Payment Successfull !!')
             let value = {
                 providerid: this.provider.id, 
                 amount: this.amount,
