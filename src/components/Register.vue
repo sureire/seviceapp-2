@@ -36,13 +36,21 @@
             lazy-rules
             :rules="[ val => val && val.length > 0  && validMobile(this.provider.mobile)|| 'Please enter a valid Mobile no.']"
         />
+        <q-checkbox class="q-pt-md" v-model="chktc">
+            <div class="text-weight-medium">  
+            I read and accept the <a href="" @click="showtc=true" >terms and conditions</a> of VplusU.in
+            </div>
+        </q-checkbox>
         <div class="row">
             <q-space/>
-            <q-btn color="primary" type="submit" label="Register" />
+            <q-btn :disable="!chktc" color="primary" type="submit" label="Register" />
         </div>
         <q-dialog v-model="enableotp" persistent transition-show="scale" transition-hide="scale">
             <otpform text='Enter OTP for login' @success="onOtpSuccess"/>
         </q-dialog>
+        <q-dialog v-model="showtc" persistent transition-show="rotate" transition-hide="rotate">
+             <tc-form />
+        </q-dialog>        
     </q-form>
 
 </template>
@@ -50,12 +58,15 @@
 <script>
 export default {
     components :{
-        'otpform' : require('components/otpform.vue').default
+        'otpform' : require('components/otpform.vue').default,
+        'tc-form' : require('components/TermsCd.vue').default        
     },    
     props: ['usertype'],
     data() {
         return {
             enableotp:false,
+            showtc:false,
+            chktc:false,            
             provider: {
                 name:'',
                 email:'',

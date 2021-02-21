@@ -3,7 +3,7 @@
     <q-chip size="18px" icon="bookmark">
         New Service Request for {{$store.state.selectedservice}}
     </q-chip>
-    <div  class="q-pa-md" style="max-width: 350px">
+    <div  class="q-pa-md">
         <div v-if= "!userid || $store.state.usertype === 'Dealer'">
             <q-input  v-model="username" label="Name" />
             <q-input  v-model="mobile" label="Mobile" 
@@ -25,14 +25,21 @@
         </template>
         </q-input>
         <q-input v-model="newRequest.description" label="Service Description" />
-        <q-select class="q-pa-xs" v-model="newRequest.preferedtimeslot" :options="timeslot" label="Pick a TimeSlot" />
-        <q-toggle class="q-pa-md" v-model="newRequest.emergency" color="red" label="Emergency" />
-
-        <div class="q-pa-xs">
-            <q-btn icon="add_alert" label="Create" color="primary" @click="onCreate"/>
+        <q-select class="q-pt-md" v-model="newRequest.preferedtimeslot" :options="timeslot" label="Pick a TimeSlot" />
+        <q-toggle class="q-pt-md" v-model="newRequest.emergency" color="red" label="Emergency" />
+        <q-checkbox class="q-pt-md" v-model="chktc">
+            <div class="text-weight-medium">  
+            I read and accept the <a href="" @click="showtc=true" >terms and conditions</a> of VplusU.in
+            </div>
+        </q-checkbox>
+        <div class="q-pt-xs">
+            <q-btn icon="add_alert" label="Create" :disable="!chktc" color="primary" @click="onCreate"/>
         </div>
         <q-dialog v-model="enableotp" persistent transition-show="scale" transition-hide="scale">
              <otpform text='Enter OTP for login' @success="onOtpSuccess"/>
+        </q-dialog>
+        <q-dialog v-model="showtc" persistent transition-show="rotate" transition-hide="rotate">
+             <tc-form />
         </q-dialog>
     </div>
 
@@ -42,11 +49,14 @@
 <script>
 export default {
     components :{
-        'otpform' : require('components/otpform.vue').default
+        'otpform' : require('components/otpform.vue').default,
+        'tc-form' : require('components/TermsCd.vue').default
     },    
     data() {
         return {
             enableotp: false,
+            showtc:false,
+            chktc:false,
             userid: this.$store.state.selectedUser.id,
             username: null,
             mobile: null,

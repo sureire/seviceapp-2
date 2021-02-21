@@ -48,8 +48,9 @@
       <q-drawer
         v-model="leftDrawerOpen"
         show-if-above
-        :width="200"
+        :width="180"
         :breakpoint="500"
+        content-style="background-color: #fcfcd7"
       >
         <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
           <q-list padding class="menu-list">
@@ -86,15 +87,30 @@
 
           </q-list>
         </q-scroll-area>
-        <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
-          <div class="absolute-bottom bg-transparent">
-            <!-- <q-avatar size="56px" class="q-mb-sm">
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png">
-            </q-avatar> -->
-          </div>
+        <q-img class="absolute-top" contain src="/assets/logo.jpeg" style="height: 120px">
+          <!-- <div class="absolute-bottom bg-transparent">
+            <q-avatar size="56px" class="q-mb-sm">
+              <img src="/assets/logo.jpeg">
+            </q-avatar>
+          </div> -->
         </q-img>
       </q-drawer>
-
+      <q-footer elevated class="bg-teal" style="height:80px;">
+        <q-toolbar class="row justify-center" >
+            <q-btn flat rounded label="About Us" @click="showaboutus=true" text-color="white"/>
+            <q-btn flat rounded label="Contact Us" @click="showcontactus=true" text-color="white"/>
+            <q-btn flat rounded label="Privacy Policy" @click="showprivacy=true" text-color="white"/>
+        </q-toolbar>
+      </q-footer>
+      <q-dialog v-model="showcontactus" transition-show="rotate" transition-hide="rotate">
+        <contact-us />
+      </q-dialog>
+      <q-dialog v-model="showaboutus" transition-show="rotate" transition-hide="rotate">
+        <about-us />
+      </q-dialog>
+      <q-dialog v-model="showprivacy" transition-show="rotate" transition-hide="rotate">
+        <privacy-policy />
+      </q-dialog>
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -105,11 +121,18 @@
 
 export default {
   name: 'MainLayout',
-  components: {  },
+  components: { 
+      'contact-us' : require('pages/Contactus.vue').default,
+      'about-us' : require('pages/Aboutus.vue').default,
+      'privacy-policy' : require('pages/privacypl.vue').default,
+   },
   data () {
     return {
       leftDrawerOpen: false,
       selectedmenu: null,
+      showaboutus: false,
+      showcontactus: false,
+      showprivacy:false,
       MenuList:
             [
         {

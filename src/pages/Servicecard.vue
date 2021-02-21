@@ -13,7 +13,7 @@
         <q-card-section class="col-5 flex flex-center">
           <q-img
             class="rounded-borders"
-            src="appliances.jpg"
+            src="/assets/appliances.jpg"
           />
         </q-card-section>
       </q-card-section>
