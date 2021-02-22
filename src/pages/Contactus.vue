@@ -1,7 +1,8 @@
 <template>
       <q-card style="width: 100%" class="bg-teal text-white">
-      <img src="/assets/gpslocation.png">
-
+      <q-img src="~assets/gpslocation.jpg"/>
+      <q-btn class="AClass" flat round icon="close" color="black" v-close-popup />         
+     
       <q-card-section>
         <div class="text-h6">Green Power Solution</div>
         <div class="text-subtitle2">
@@ -38,5 +39,8 @@ export default {
 </script>
 
 <style>
-
+.AClass{
+    right:0px;
+    position: absolute;
+}
 </style>

@@ -105,14 +105,35 @@ export default {
                 this.CreateRequest()
         },
         CreateRequest(){
-            this.$http.post(process.env.HOSTNAME + '/srequest', this.newRequest)
-            .then(Response => {
-                //this.$store.commit('setSelectedProvider',Response.data)
-                this.$router.push('/userrequests')
-                this.showNotify()
+            //duplicate check for service request
+            console.log(`${process.env.HOSTNAME}/srequestdupcheck/${this.newRequest.userid}/${this.newRequest.location}/${this.newRequest.category}`)
+            this.$http.get(`${process.env.HOSTNAME}/srequestdupcheck/${this.newRequest.userid}/${this.newRequest.location}/${this.newRequest.category}`)
+            .then(response => {
+                console.log('response is ' + JSON.stringify(response.data))
+                if (response.data.cnt > 0){
+                    this.$q.dialog({
+                        title: 'Alert',
+                        message: 'Service Request already added, please contact VplusU'
+                    }).onDismiss(()=>{
+                        return
+                    })
+                }
+                else {
+                    //add a service request
+                    this.$http.post(process.env.HOSTNAME + '/srequest', this.newRequest)
+                    .then(Response => {
+                        //this.$store.commit('setSelectedProvider',Response.data)
+                        this.$router.push('/userrequests')
+                        this.$store.commit('setSelectedTab','Services')
+                        this.showNotify()
+                    })
+                    .catch(err => {
+                        throw(err)
+                    })
+                }
             })
             .catch(err => {
-                throw(err)
+                console.error(err)
             })
         },
         CreateNewUserandAddRequest(){

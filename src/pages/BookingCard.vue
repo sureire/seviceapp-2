@@ -69,37 +69,65 @@ props :['service' ],
 data(){
   return {
     cancelreason: '',
-    enableotp:false
+    enableotp:false,
+    opencalls:0,
+    servicecnt:0
   }
 },
 methods :{
-    addRequest(){
+    async addRequest(){
+      let ustatus = false      
+      await this.checkOpencalls()
+      await this.checkServiceCountperdat()
+      if (this.opencalls > 2){
+        this.$q.dialog({
+          title: 'Alert',
+          message: `${this.$store.state.selectedProvider.name} have 3 open calls already. Not allowed to take a new call`
+        }).onDismiss(() => {
+          return
+        })
+      }
+      else if(this.servicecnt > 9){
+        this.$q.dialog({
+          title: 'Alert',
+          message: `${this.$store.state.selectedProvider.name} have 3 open calls already. Not allowed to take a new call`
+        }).onDismiss(() => {
+          return
+        })
+      }
+      else
+        ustatus = true
+
       if (this.$store.state.selectedProvider.walletbalance > 100) {
+
         let supdate = {
           id: this.service.id,
           serviceprovider: this.$store.state.selectedProvider.id,
           status:'in progress'
         }
-        this.$http.put(`${process.env.HOSTNAME}/srequest/${this.service.id}`,supdate)
-        .then(response => {
-            console.log(response.data)
-            //this.$router.push('/bookinglist')
-        })
-        .catch(err => {
-          throw(err)
-        })
-        let newamount = +this.$store.state.selectedProvider.walletbalance - 100
-        console.log('newamount is ' + newamount)
-        this.$http.put(process.env.HOSTNAME + '/provider', {id: this.$store.state.selectedProvider.id, amount: newamount})
-        .then(res=>{
-            this.$q.notify('Wallet updated to ' + newamount + ' for Engineer ' + this.$store.state.selectedProvider.name)
-            this.$http.get(process.env.HOSTNAME + '/provider/' + this.$store.state.selectedProvider.id)
-            .then(res => {
-                console.log('Provider ' + res.data)
-                this.$store.commit('setSelectedProvider', res.data) 
-                this.$store.dispatch('getBookingList', this.$store.state.selectedProvider.id)
-            })
-        })
+        console.log('ustatus is ' + ustatus)
+        if (ustatus) {
+          this.$http.put(`${process.env.HOSTNAME}/srequest/${this.service.id}`,supdate)
+          .then(response => {
+              console.log(response.data)
+              //this.$router.push('/bookinglist')
+          })
+          .catch(err => {
+            throw(err)
+          })
+          let newamount = +this.$store.state.selectedProvider.walletbalance - 100
+          console.log('newamount is ' + newamount)
+          this.$http.put(process.env.HOSTNAME + '/provider', {id: this.$store.state.selectedProvider.id, amount: newamount})
+          .then(res=>{
+              this.$q.notify('Wallet updated to ' + newamount + ' for Engineer ' + this.$store.state.selectedProvider.name)
+              this.$http.get(process.env.HOSTNAME + '/provider/' + this.$store.state.selectedProvider.id)
+              .then(res => {
+                  console.log('Provider ' + res.data)
+                  this.$store.commit('setSelectedProvider', res.data) 
+                  this.$store.dispatch('getBookingList', this.$store.state.selectedProvider.id)
+              })
+          })
+        }
       }
       else {
         this.$q.dialog({
@@ -145,6 +173,24 @@ methods :{
               console.log(response.data)
               this.$store.dispatch('getBookingList', this.$store.state.selectedProvider.id)
           })
+    },
+    async checkOpencalls(){
+      try {
+          let response = await this.$http.get(`${process.env.HOSTNAME}/opencalls/${this.$store.state.selectedProvider.id}`)
+          console.log('opencalls result: ' + response.data.cnt)
+          this.opencalls = response.data.cnt
+        }catch(err) {
+            console.error(err)
+        }
+    },
+    async checkServiceCountperdat(){
+      try {
+           let response = await this.$http.get(`${process.env.HOSTNAME}/totalserviceperday/${this.$store.state.selectedProvider.id}`)
+            console.log('totalserviceperday result: ' + response.data.cnt)
+            this.servicecnt = response.data.cnt
+          }catch(err) {
+            console.error(err)
+          }
     }
   }
 }
