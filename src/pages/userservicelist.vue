@@ -30,16 +30,24 @@ export default {
         }
    },
    mounted() {
+     try {
+      this.$q.loading.show()
      let url = 'srequest_user'
      if (this.$store.state.usertype === 'Dealer')
         url = 'dealersr'
       this.$http.get(`${process.env.HOSTNAME}/${url}/${this.$store.state.selectedUser.id}`)
       .then(response => {
           this.services = response.data
+          this.$q.loading.hide()
       })
       .catch(err => {
+              this.$q.loading.hide()
           throw(err)
       })
+     }catch(e) {
+       this.$q.loading.hide()
+     }
+
   }
 }
 </script>

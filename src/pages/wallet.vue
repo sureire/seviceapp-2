@@ -3,13 +3,13 @@
     <q-card class="my-card q-pa-md">
       <q-card-section class="bg-primary text-white" align="right">
         <div class="text-subtitle2">Wallet Balance</div>
-        <div class="text-h6">$ {{provider.walletbalance}}</div>
+        <div class="text-h6">₹ {{provider.walletbalance}}</div>
       </q-card-section>
 
       <q-separator />
 
       <q-card-actions align="right">
-          <q-input class="col" v-model="amount" type="number" prefix="$" align="left"/>
+          <q-input class="col" v-model="amount" type="number" prefix="₹" align="left"/>
         <q-btn class="col" color="primary" outline icon="add" @click="onAdd">Add & Pay </q-btn>
       </q-card-actions>
       <q-card-section>

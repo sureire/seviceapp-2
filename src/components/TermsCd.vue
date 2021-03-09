@@ -11,7 +11,7 @@
         </q-toolbar>
 
         <q-card-section style="max-height: 50vh"  class="scroll">
-          <div q-pa-md v-if="$store.state.usertype !== 'Provider'">
+          <div q-pa-md v-if="$store.state.usertype !== 'Engineer'">
             <ul style="list-style-type: disc;">
             <li>
             <p>We <span style="text-decoration: underline;">vplusu.in</span> (<strong>Green Power Solution</strong>) are the only arbitrator among the serviceengineers (Freelancers) and the customers, otherwise we are not legal obligate for anyissues occur on the site.</p>

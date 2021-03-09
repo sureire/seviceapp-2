@@ -1,8 +1,11 @@
 <template>
   <q-page padding>
       <q-card class="auth-tabs">
-        <div v-if="!register">
-          <login-page :usertype="$store.state.usertype"/>
+        <div v-if="$store.state.selectedUser || $store.state.selectedProvider">
+            <logout-page/>
+        </div>
+        <div v-else-if="!register">
+          <login-page :usertype="$store.state.usertype" />
         <q-separator />
         <q-banner rounded class="bg-white text-black">
             <span class="q-pa-md">New {{$store.state.usertype}} click </span>
@@ -22,13 +25,17 @@
 export default {
     components : {
         'login-page' : require('components/Login.vue').default,
-        'register-page' : require('components/Register.vue').default
+        'register-page' : require('components/Register.vue').default,
+        'logout-page' : require('components/Logout.vue').default
     },
     data(){
         return {
             usertype: null,
             register: false
         }
+    },
+    methods: {
+
     },
     mounted() {
         this.usertype = this.$store.state.usertype

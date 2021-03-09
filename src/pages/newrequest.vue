@@ -1,6 +1,6 @@
 <template>
   <q-page padding class="constrain-more">
-    <q-chip size="18px" icon="bookmark">
+    <q-chip size="18px" icon="bookmark" color="teal-2">
         New Service Request for {{$store.state.selectedservice}}
     </q-chip>
     <div  class="q-pa-md">
@@ -9,16 +9,19 @@
             <q-input  v-model="mobile" label="Mobile" 
                 lazy-rules :rules="[ val => val && val.length > 0 || 'Please enter a valid Mobile no.']"
                     />
+            <div >
+                <q-input
+                v-model="address"
+                label="Address"
+                autogrow
+                />
+            </div>                    
         </div>
-
-        <q-input  v-model="newRequest.requestdate" label="Requested Date" mask="date" :rules="['date']">
+        <q-input  v-model="newRequest.requestdate" label="Requested Date" mask="##-##-####" @click="$refs.qDateProxy.show()" clearable>
         <template v-slot:append>
-            <q-icon name="event" class="cursor-pointer">
+            <q-icon name="event" color="primary" class="cursor-pointer">
             <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                <q-date v-model="newRequest.requestdate">
-                <div class="row items-center justify-end">
-                    <q-btn v-close-popup label="Close" color="primary" flat />
-                </div>
+                <q-date v-model="newRequest.requestdate" :options="optionsFn"  mask="DD-MM-YYYY" @input="$refs.qDateProxy.hide()">
                 </q-date>
             </q-popup-proxy>
             </q-icon>
@@ -47,6 +50,7 @@
 </template>
 
 <script>
+import { date } from 'quasar'
 export default {
     components :{
         'otpform' : require('components/otpform.vue').default,
@@ -57,11 +61,12 @@ export default {
             enableotp: false,
             showtc:false,
             chktc:false,
-            userid: this.$store.state.selectedUser.id,
+            userid: this.$store.state.selectedUser? this.$store.state.selectedUser.id:'',
             username: null,
             mobile: null,
+            address: null,            
             newRequest :{
-                userid: this.$store.state.selectedUser.id,
+                userid: this.$store.state.selectedUser? this.$store.state.selectedUser.id:'',
                 category: this.$store.state.selectedservice,
                 location: this.$store.state.selectedlocation,
                 requestdate: '',
@@ -91,6 +96,7 @@ export default {
                 })
 
             }
+            this.$q.loading.hide()
         },
         onCreate(){
             if (!this.userid) {
@@ -103,8 +109,10 @@ export default {
             }
             else
                 this.CreateRequest()
+            this.$q.loading.hide()
         },
         CreateRequest(){
+            this.$q.loading.show()
             //duplicate check for service request
             console.log(`${process.env.HOSTNAME}/srequestdupcheck/${this.newRequest.userid}/${this.newRequest.location}/${this.newRequest.category}`)
             this.$http.get(`${process.env.HOSTNAME}/srequestdupcheck/${this.newRequest.userid}/${this.newRequest.location}/${this.newRequest.category}`)
@@ -115,6 +123,7 @@ export default {
                         title: 'Alert',
                         message: 'Service Request already added, please contact VplusU'
                     }).onDismiss(()=>{
+                        this.$q.loading.hide()
                         return
                     })
                 }
@@ -126,22 +135,27 @@ export default {
                         this.$router.push('/userrequests')
                         this.$store.commit('setSelectedTab','Services')
                         this.showNotify()
+                        this.$q.loading.hide()
                     })
                     .catch(err => {
+                        this.$q.loading.hide()
                         throw(err)
                     })
                 }
             })
             .catch(err => {
+                this.$q.loading.hide()
                 console.error(err)
             })
         },
         CreateNewUserandAddRequest(){
+            this.$q.loading.show()
             let newuser = {
                 name: this.username,
                 email:'',
                 mobile:this.mobile,
-                usertype:1
+                usertype:1,
+                address: this.address
             }
             //first check if the customer aleady exists
             this.$http.get(`${process.env.HOSTNAME}/users/${this.mobile}`)
@@ -155,6 +169,7 @@ export default {
                         if (this.$store.state.usertype !== 'Dealer')
                             this.$store.commit('setSelectedUser',Response.data)
                         this.newRequest.userid = Response.data.id
+                        this.$store.commit('setLoginStatus',true)
                         this.CreateRequest()
                     })
                  })
@@ -166,7 +181,13 @@ export default {
                     icon: 'announcement',
                     timeout: 5000
                 })
-        }
+        },
+        optionsFn (d) {
+            var rightNow = new Date();
+            var res = date.formatDate(rightNow,'YYYY/MM/DD')
+            return d >= res
+            },            
+        
     },
     mounted() {
         console.log('userid is ' + this.userid)

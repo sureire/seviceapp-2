@@ -38,9 +38,9 @@ export default {
 data(){
     return {
         service : {
-            name: '',
-            category: '',
-            location: '',
+            name: null,
+            category: null,
+            location: null,
             providerid: this.$store.state.selectedProvider.id
         }
     }
@@ -48,13 +48,20 @@ data(){
 methods: {
     onAdd(){
         console.log(this.service)
-        this.$http.post(process.env.HOSTNAME + '/service', this.service)
-        .then(res => {
-            this.$router.push('/providerservices')
-        })
-        .catch(err => {
-            throw(err)
-        })
+        if (!this.service.name || !this.service.category || !this.service.location)
+            this.$q.notify('Missing fields in Add Service. Please add all the details...')
+        else {
+            this.$q.loading.show()
+            this.$http.post(process.env.HOSTNAME + '/service', this.service)
+            .then(res => {
+                this.$q.loading.hide()
+                this.$router.push('/providerservices')
+            })
+            .catch(err => {
+                this.$q.loading.hide()
+                throw(err)
+            })
+        } 
     }
 },
 mounted() {

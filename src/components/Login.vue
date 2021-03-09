@@ -1,7 +1,7 @@
 
 <template>
     <form class="q-pa-md" @submit.prevent="onSubmit">
-            <q-chip square size="18px" color="blue-grey-2" text-color="black" icon="login">
+            <q-chip square size="18px" color="teal-2"  icon="login">
                 {{usertype}} Login
             </q-chip>
             <div class="q-pa-sm"/>
@@ -129,6 +129,7 @@ methods: {
                         this.$store.commit('setSelectedUser',response.data)
                         this.$store.commit('setSelectedTab','Search')
                         this.$router.push('/search')
+                        this.$store.commit('setLoginStatus',true)
                         // if (this.$store.state.selectedservice)
                         //     this.$router.push('/newrequest')    
                         // else{
@@ -146,7 +147,8 @@ methods: {
                     .then(response => {
                         this.$store.commit('setSelectedProvider',response.data)
                         this.$store.commit('setSelectedTab','MyServices')
-                        this.$router.push('/providerservices')            
+                        this.$router.push('/providerservices')
+                        this.$store.commit('setLoginStatus',true)         
                     })
                     .catch(err => {
                         //throw(err)

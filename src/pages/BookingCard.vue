@@ -9,38 +9,16 @@
             </q-item-section>
 
             <q-item-section>
-              <q-item-label v-if="service.serviceprovider">{{service.mobile}}</q-item-label>
-              <q-item-label v-else>xxxxxxxxxxxx</q-item-label>
-              <q-item-label caption>
+              <!-- <q-item-label v-if="service.serviceprovider">{{service.mobile}}</q-item-label>
+              <q-item-label v-else>xxxxxxxxxxxx</q-item-label> -->
+              <q-item-label>{{showMobile}}</q-item-label>
+              <q-item-label overline>
                 {{service.name}}
               </q-item-label>
+
             </q-item-section>
-            <q-card-actions >
-              <div v-if="service.status === 'in progress'" >
-                <q-btn size="md" round color="light-green" icon="done" @click="onDone" style="margin-bottom: 5px"/>
-                <q-space/>
-                <q-btn size="md" round color="red" icon="clear" @click="onCancel" />
-              </div>
-              <div v-else>
-                <q-btn v-if="service.status === 'pending'" round color="primary" icon="add" @click="addRequest"/>
-              </div>
-            </q-card-actions>
-          </q-item>
-
-          <q-separator />
-
-          <q-card-section horizontal>
-            <q-card-section class="col-6">
-              <q-item-label caption>{{service.category}}</q-item-label>
-              <div class="flex q-pa-sm">
-                <q-icon name="place"/>
-                <q-item-label>{{service.location}}</q-item-label>
-              </div>
-              <q-item-label>{{service.description}}</q-item-label>
-            </q-card-section>
-
-
-
+            <!-- <q-card-section>
+            </q-card-section> -->
             <q-card-section >
           <div v-if="service.emergency === 1">
               <q-chip outline  size="sm" color="red" text-color="white" icon="notification_important">
@@ -52,11 +30,52 @@
               {{service.status}}
             </q-badge>         
             </q-card-section>
+
+          </q-item>
+
+          <q-separator />
+
+          <q-card-section horizontal>
+            <q-card-section class="col">
+              <q-item-label caption>{{service.category}}</q-item-label>
+              <div class="row q-mt-sm">
+                <q-icon name="place"/>
+                <q-item-label>{{service.location}}</q-item-label>
+              </div>
+            </q-card-section>
+            <q-card-actions>
+              <div v-if="service.status === 'in progress'" >
+                <q-btn class="q-ml-sm" size="md" round flat color="primary" icon="more_horiz" @click="showdetails=true"/>                
+                <q-btn class="q-ml-sm" size="md" round flat color="light-green" icon="done" @click="onDone"/>
+                <q-btn class="q-ml-sm" size="md" round flat color="red" icon="clear" @click="onCancel" />
+              </div>
+              <div v-else>
+                <q-btn v-if="service.status === 'pending'" round color="primary" icon="add" @click="addRequest"/>
+              </div>
+            </q-card-actions>            
           </q-card-section>
           <q-dialog v-model="enableotp" persistent transition-show="scale" transition-hide="scale">
                 <otpform text='Enter OTP for login' @success="onOtpSuccess"/>
           </q-dialog>
         </q-card>
+        <q-dialog v-model="showdetails">
+          <q-card style="min-width: 300px">
+            <q-card-section>
+              <div class="text-h6">{{service.name}}</div>
+            </q-card-section>
+            <q-separator/>
+            <q-card-section class="q-mt-xm">
+               <q-item-label> Desc: {{service.description}}</q-item-label>
+               <q-item-label caption class="q-mt-sm"> Date: {{service.requestdate}} </q-item-label>
+               <q-item-label caption class="q-mt-sm"> Timeslot: {{service.preferedtimeslot}} </q-item-label>
+               <q-item-label caption class="q-mt-sm"> Address: {{service.address}} </q-item-label>               
+            </q-card-section>
+
+            <q-card-actions align="right">
+              <q-btn flat label="OK" color="primary" @click="showdetails=false" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
    </div>
 </template>
 
@@ -69,10 +88,19 @@ props :['service' ],
 data(){
   return {
     cancelreason: '',
+    showdetails:false,
     enableotp:false,
     opencalls:0,
     servicecnt:0
   }
+},
+computed : {
+   showMobile(){
+     if (this.service.serviceprovider && this.service.status == 'in progress')
+        return this.service.mobile
+     else
+        return 'xxxxxxxxxx'
+   }
 },
 methods :{
     async addRequest(){
@@ -98,7 +126,7 @@ methods :{
       else
         ustatus = true
 
-      if (this.$store.state.selectedProvider.walletbalance > 100) {
+      if (this.$store.state.selectedProvider.walletbalance > (+this.$store.state.service_amt)) {
 
         let supdate = {
           id: this.service.id,
@@ -115,16 +143,26 @@ methods :{
           .catch(err => {
             throw(err)
           })
-          let newamount = +this.$store.state.selectedProvider.walletbalance - 100
+          let newamount = +this.$store.state.selectedProvider.walletbalance - parseInt(this.$store.state.service_amt)
           console.log('newamount is ' + newamount)
           this.$http.put(process.env.HOSTNAME + '/provider', {id: this.$store.state.selectedProvider.id, amount: newamount})
           .then(res=>{
               this.$q.notify('Wallet updated to ' + newamount + ' for Engineer ' + this.$store.state.selectedProvider.name)
+              let value = {
+                  providerid: this.$store.state.selectedProvider.id, 
+                  amount: newamount,
+                  transtype: 'subtract'
+              }
+              this.$http.post(`${process.env.HOSTNAME}/wallet`,value)
+              .then(res => {
+                  console.log("wallet transaction added...")
+              })              
               this.$http.get(process.env.HOSTNAME + '/provider/' + this.$store.state.selectedProvider.id)
               .then(res => {
                   console.log('Provider ' + res.data)
                   this.$store.commit('setSelectedProvider', res.data) 
-                  this.$store.dispatch('getBookingList', this.$store.state.selectedProvider.id)
+                  //this.$store.dispatch('getBookingList', this.$store.state.selectedProvider.id)
+                  this.$emit('UpdateBookingList')
               })
           })
         }
@@ -150,7 +188,6 @@ methods :{
           cancel: true,
           persistent: true
         }).onOk(data => {
-          alert(data)
           this.updateStatus('cancelling:' + data)
         })
     },
@@ -171,7 +208,8 @@ methods :{
           .then(response => {
               this.$q.notify('Status changed to ' + status + ' successfully..')
               console.log(response.data)
-              this.$store.dispatch('getBookingList', this.$store.state.selectedProvider.id)
+              //this.$store.dispatch('getBookingList', this.$store.state.selectedProvider.id)
+              this.$emit('UpdateBookingList')
           })
     },
     async checkOpencalls(){
@@ -199,5 +237,5 @@ methods :{
 <style lang="sass" scoped>
 .my-card
   width: 100%
-  max-width: 300px
+  max-width: 350px
 </style>

@@ -9,7 +9,7 @@
             <div class="self-center full-width no-outline" tabindex="0">Register a Provider</div>
             </template>
         </q-field> -->
-        <q-chip square size="18px" color="deep-orange-3" text-color="black" icon="login">
+        <q-chip square size="18px" color="teal-2" icon="login">
             {{usertype}} Registration
         </q-chip>
         <q-input
@@ -36,6 +36,14 @@
             lazy-rules
             :rules="[ val => val && val.length > 0  && validMobile(this.provider.mobile)|| 'Please enter a valid Mobile no.']"
         />
+        <div>
+            <q-input
+            outlined
+            v-model="provider.address"
+            label="Address"
+            autogrow
+            />
+        </div>        
         <q-checkbox class="q-pt-md" v-model="chktc">
             <div class="text-weight-medium">  
             I read and accept the <a href="" @click="showtc=true" >terms and conditions</a> of VplusU.in
@@ -71,7 +79,8 @@ export default {
                 name:'',
                 email:'',
                 mobile:'',
-                usertype:''
+                usertype:'',
+                address:''
             }
 
         }
@@ -112,10 +121,11 @@ export default {
                                         })
                                      this.$store.commit('setSelectedProvider',Response.data)
                                      this.$router.push('/providerservices')
-                                })
-                                .catch(err => {
-                                    this.showNotifyError('Mobile already registered! Check with the Admin')
-                                })
+                                     this.$store.commit('setLoginStatus',true)
+                                    })
+                                    .catch(err => {
+                                        this.showNotifyError('Mobile already registered! Check with the Admin')
+                                    })
                         })
                     }
                     else {
@@ -140,6 +150,7 @@ export default {
                                     this.showNotify()
                                     this.$store.commit('setSelectedUser',Response.data)
                                     this.$router.push('/')
+                                    this.$store.commit('setLoginStatus',true)
                                 })
                                 .catch(err => {
                                     this.showNotifyError('Error in registering ' + this.usertype)

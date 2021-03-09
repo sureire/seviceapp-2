@@ -11,15 +11,18 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     usertype: process.env.USERTYPE,
+    login: false,
     Locations : [],//['Coimbatore', 'Pollachi', 'udumalai','Ooty'],
     Services : [], //['Home Cleaning', 'Electrical', 'Appliances', 'Plumbing'],
     selectedlocation:'',
     selectedservice:'',
-    selectedProvider:'',
-    selectedUser: '',
+    selectedProvider:null,
+    selectedUser: null,
     selectedTab: '',
     Providers: [], 
-    BookingList: []
+    BookingList: [],
+    Settings:[],
+    service_amt: null
   },
   mutations: {
     addTask(state, newTaskTitle) {
@@ -65,12 +68,20 @@ export default new Vuex.Store({
     SET_BOOKINGLIST(state, bookinglist){
       state.BookingList = []
       bookinglist.forEach(e => {
-        console.log(e)
+        //console.log(e)
         state.BookingList.push(e)
       });
     },
     setSelectedTab(state, tab) {
       state.selectedTab = tab
+    },
+    setLoginStatus(state, status){
+      state.login = status
+    },
+    setSettings(state, setting){
+      state.Settings = setting
+      let a = setting.filter(a => a.key1 === 'service_amount')
+      state.service_amt = a[0].value
     }
 
 
@@ -96,6 +107,14 @@ export default new Vuex.Store({
         .catch(err => {
           throw err
         })
+    },
+    async getSettings({commit}) {
+      try {
+        let res = await axios.get(process.env.HOSTNAME + '/settings')
+        commit('setSettings',res.data)
+      }catch(err){
+        console.error(err)
+      }
     },
     getBookingList({commit},id) {
       axios.get(`${process.env.HOSTNAME}/srequest_bookinglist/${id}`)

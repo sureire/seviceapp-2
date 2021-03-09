@@ -47,6 +47,7 @@ export default {
     if (!this.$store.Locations){
       this.$store.dispatch('getLocations')
       this.$store.dispatch('getCategory')
+      this.$store.dispatch('getSettings')
     }
   }
 }

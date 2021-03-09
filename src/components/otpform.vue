@@ -14,7 +14,7 @@
         </q-card-section>
 
         <q-card-actions align="right" class="bg-white text-teal">
-          <q-btn flat label="OK" v-close-popup @click="onOK"/>
+          <q-btn flat label="OK" v-close-popup @click.stop="onOK"/>
         </q-card-actions>
       </q-card>
 

@@ -24,7 +24,7 @@
       </q-toolbar>
       <div v-if="$store.state.usertype === 'User' || $store.state.usertype === 'Dealer'">
         <q-tabs  no-caps dense v-model="$store.state.selectedTab" class="bg-teal text-grey-5 shadow-2" active-color="white">
-          <q-tab name="LoginUser" icon="login" label="Login" @click="onLogin" />
+          <q-tab name="LoginUser" :icon="showloginIcon" :label="showloginStatus" @click="onLogin" />
           <!-- <q-tab v-if="$store.state.selectedUser.name" name="Person" icon="person" @click="onLogin">
             {{$store.state.selectedUser.name}}
           </q-tab> -->
@@ -34,7 +34,7 @@
       </div>
       <div v-else>
         <q-tabs  no-caps dense v-model="$store.state.selectedTab" class="bg-teal text-grey-5 shadow-2" active-color="white">
-          <q-tab name="Loginprovider" icon="login" label="Login" @click="onLogin" />
+          <q-tab name="Loginprovider" :icon="showloginIcon" :label="showloginStatus" @click="onLogin" />
           <!-- <q-tab v-if="$store.state.selectedProvider.name" name="Person" icon="person" @click="onLogin">
             {{$store.state.selectedProvider.name.substring(0,8)}}
           </q-tab> -->
@@ -157,11 +157,28 @@ export default {
   },
   computed:{
     showSelectedPerson(){
-        if (this.$store.state.usertype === 'User' || this.$store.state.usertype === 'Dealer')
-          return this.$store.state.selectedUser.name
-        else 
-          return this.$store.state.selectedProvider.name
+        try {
+          if (this.$store.state.usertype == 'User' || this.$store.state.usertype == 'Dealer')
+            return this.$store.state.usertype + ': ' + this.$store.state.selectedUser.name
+          else 
+            return `${this.$store.state.usertype}: ${this.$store.state.selectedProvider.name}`
+        }catch(e){
+            return ''
+        }
+    },
+    showloginStatus(){
+      if(this.$store.state.login)
+        return "Logout"
+      else
+        return "Login"
+    },
+    showloginIcon(){
+      if (this.$store.state.login)
+        return 'logout'
+      else
+        return 'login'
     }
+
   },
   methods:{
     onMenuClick(item){
@@ -171,6 +188,8 @@ export default {
         this.selectedmenu = item
         this.$store.commit('setLoginType',item.name)
         console.log(this.$router.name)
+        console.log('Selected User: ' + JSON.stringify(this.$store.state.selectedUser))
+        console.log('Selected Eng: ' + JSON.stringify(this.$store.state.selectedProvider))
         const path = `/Pageauth`
         if (this.$route.path !== path) this.$router.push(path)
     },
