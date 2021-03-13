@@ -18,7 +18,7 @@
                     <q-btn rounded icon="login" color="primary" label="Login" type="submit"/>
                 </div>
             <q-dialog v-model="enableotp" persistent transition-show="scale" transition-hide="scale">
-                <otpform text='Enter OTP for login' @success="onOtpSuccess"/>
+                <otpform :text="otp" @success="onOtpSuccess"/>
             </q-dialog>
 
     </form>
@@ -41,7 +41,9 @@ data() {
             name:'',
             email:'',
             mobile:''
-        }
+        },
+        otp:null,
+        otperror:null
     }
 },
 
@@ -49,7 +51,7 @@ computed: {
 
 },
 methods: {
-        onSubmit(){
+        async onSubmit(){
             if (this.$refs.mobile.hasError) {
                 this.showNotifyError()
                 return
@@ -58,6 +60,9 @@ methods: {
                 this.showNotifyError('Mobile number empty')
                 return
             }
+            this.otp = await this.sendOTP('User',this.provider.mobile)
+            //this.otp = 1234
+            //console.log('OTP is ' + this.otp)
             this.enableotp = true
         },
         // onRegister(){
@@ -121,7 +126,9 @@ methods: {
         },
 
         onOtpSuccess() {
-            this.enableotp = false
+                console.log('reached')
+            // if (this.otp == userotp){
+               this.enableotp = false
                 if (this.usertype == 'User' || this.usertype == 'Dealer'){
                     this.$http.get(`${process.env.HOSTNAME}/users/${this.provider.mobile}`)
                     .then(response => {
@@ -155,6 +162,13 @@ methods: {
                         this.showNotifyError('Engineer Mobile not registered !! Click Register')
                     })
                 }
+            //}
+            // else {
+            //     //this.enableotp = false
+            //     console.log('Invalid OTP entered, Try again!')
+            //     this.otperror = 'Invalid OTP entered, Try again!'
+            //     //this.enableotp = true
+            // }
         },
         validEmail(email) {
         let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

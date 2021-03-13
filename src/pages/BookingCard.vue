@@ -55,7 +55,7 @@
             </q-card-actions>            
           </q-card-section>
           <q-dialog v-model="enableotp" persistent transition-show="scale" transition-hide="scale">
-                <otpform text='Enter OTP for login' @success="onOtpSuccess"/>
+                <otpform :text="otp" @success="onOtpSuccess"/>
           </q-dialog>
         </q-card>
         <q-dialog v-model="showdetails">
@@ -87,6 +87,7 @@ export default {
 props :['service' ],
 data(){
   return {
+    otp:null,
     cancelreason: '',
     showdetails:false,
     enableotp:false,
@@ -139,6 +140,7 @@ methods :{
           .then(response => {
               console.log(response.data)
               //this.$router.push('/bookinglist')
+              this.sendEngtoCustomerMsg(this.service.name,this.$store.state.selectedProvider.name,this.service.mobile,this.$store.state.selectedProvider.mobile)
           })
           .catch(err => {
             throw(err)
@@ -189,12 +191,16 @@ methods :{
           persistent: true
         }).onOk(data => {
           this.updateStatus('cancelling:' + data)
+          this.sendCancelMsg(this.service.name,this.service.mobile,this.service.id,data)
         })
     },
-    onDone(){
+    async onDone(){
+      this.otp = await this.sendClosureMsg(this.service.name,this.service.mobile)
+      console.log('OTP is ' + this.otp)
       this.enableotp = true;
     },
     onOtpSuccess(){
+      this.enableotp = false;
       this.updateStatus('completed')
     },
     updateStatus(status){
