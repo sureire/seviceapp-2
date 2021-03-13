@@ -174,6 +174,7 @@ methods :{
           title: 'Alert',
           message: 'Insufficient balance in the wallet'
         }).onDismiss(() => {
+          this.$store.commit('setSelectedTab','Wallet') 
           this.$router.push('/wallet')
         })
       }
@@ -191,7 +192,7 @@ methods :{
           persistent: true
         }).onOk(data => {
           this.updateStatus('cancelling:' + data)
-          this.sendCancelMsg(this.service.name,this.service.mobile,this.service.id,data)
+          //this.sendCancelMsg(this.service.name,this.service.mobile,this.service.id,data)
         })
     },
     async onDone(){

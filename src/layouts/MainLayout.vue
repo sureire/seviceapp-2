@@ -216,7 +216,7 @@ export default {
       this.$store.commit('setLoginType','User')
       this.$router.push('/search')
       this.$store.commit('setSelectedTab','Search') 
-      console.log(this.testapi(8754694995))
+      //console.log(this.testapi(8754694995))
       this.$q.notify.setDefaults({
         position: 'top',
         timeout: 5000,

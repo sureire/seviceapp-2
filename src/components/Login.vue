@@ -43,7 +43,8 @@ data() {
             mobile:''
         },
         otp:null,
-        otperror:null
+        otperror:null,
+        tdata:null
     }
 },
 
@@ -60,10 +61,48 @@ methods: {
                 this.showNotifyError('Mobile number empty')
                 return
             }
-            this.otp = await this.sendOTP('User',this.provider.mobile)
-            //this.otp = 1234
-            //console.log('OTP is ' + this.otp)
-            this.enableotp = true
+                if (this.usertype == 'User' || this.usertype == 'Dealer'){
+                    this.$http.get(`${process.env.HOSTNAME}/users/${this.provider.mobile}`)
+                    .then(response => {
+                        if (response.data.usertype == 1 && this.usertype == 'Dealer') {
+                            this.$q.notify(response.data.name + ' registered as User, cannot login as Dealer!!')    
+                            return
+                        }
+                        else if (response.data.usertype == 2 && this.usertype == 'User') {
+                            this.$q.notify(response.data.name + ' registered as Dealer, cannot login as User!!')    
+                            return
+                        }
+                        this.tdata = response.data
+                        //this.otp = this.sendOTP('User',this.provider.mobile)
+                        this.otp = 1234
+                        console.log('OTP is ' + this.otp)
+                        this.enableotp = true                        
+                    })
+                    .catch(err => {
+                        console.error(err)
+                        this.showNotifyError('User Mobile not registered !! Click Register')
+                        return
+                        //throw(err)
+                    })
+                }
+                else {
+                    this.$http.get(`${process.env.HOSTNAME}/providers/${this.provider.mobile}`)
+                    .then(response => {
+                        this.tdata = response.data
+                        this.otp = this.sendOTP('User',this.provider.mobile)
+                        //this.otp = 1234
+                        //console.log('OTP is ' + this.otp)
+                        this.enableotp = true                        
+                    })
+                    .catch(err => {
+                        //throw(err)
+                        console.error(err)
+                        this.showNotifyError('Engineer Mobile not registered !! Click Register')
+                        return
+                    })
+                }
+
+
         },
         // onRegister(){
         //     if (this.usertype === 'Engineer'){
@@ -127,48 +166,20 @@ methods: {
 
         onOtpSuccess() {
                 console.log('reached')
-            // if (this.otp == userotp){
                this.enableotp = false
-                if (this.usertype == 'User' || this.usertype == 'Dealer'){
-                    this.$http.get(`${process.env.HOSTNAME}/users/${this.provider.mobile}`)
-                    .then(response => {
-                        this.$q.notify('User ' + response.data.name + ' logged in!!')
-                        this.$store.commit('setSelectedUser',response.data)
-                        this.$store.commit('setSelectedTab','Search')
-                        this.$router.push('/search')
-                        this.$store.commit('setLoginStatus',true)
-                        // if (this.$store.state.selectedservice)
-                        //     this.$router.push('/newrequest')    
-                        // else{
-                        //     this.$store.commit('setSelectedTab','Services')
-                        //     this.$router.push('/userrequests')            
-                        // }
-                    })
-                    .catch(err => {
-                        this.showNotifyError('User Mobile not registered !! Click Register')
-                        //throw(err)
-                    })
-                }
-                else {
-                    this.$http.get(`${process.env.HOSTNAME}/providers/${this.provider.mobile}`)
-                    .then(response => {
-                        this.$store.commit('setSelectedProvider',response.data)
-                        this.$store.commit('setSelectedTab','MyServices')
-                        this.$router.push('/providerservices')
-                        this.$store.commit('setLoginStatus',true)         
-                    })
-                    .catch(err => {
-                        //throw(err)
-                        this.showNotifyError('Engineer Mobile not registered !! Click Register')
-                    })
-                }
-            //}
-            // else {
-            //     //this.enableotp = false
-            //     console.log('Invalid OTP entered, Try again!')
-            //     this.otperror = 'Invalid OTP entered, Try again!'
-            //     //this.enableotp = true
-            // }
+            if (this.usertype == 'User' || this.usertype == 'Dealer'){
+                    this.$q.notify('User ' + this.tdata.name + ' logged in!!')
+                    this.$store.commit('setSelectedUser',this.tdata)
+                    this.$store.commit('setSelectedTab','Search')
+                    this.$router.push('/search')
+                    this.$store.commit('setLoginStatus',true)
+            }
+            else {
+                    this.$store.commit('setSelectedProvider',this.tdata)
+                    this.$store.commit('setSelectedTab','MyServices')
+                    this.$router.push('/providerservices')
+                    this.$store.commit('setLoginStatus',true)         
+            }
         },
         validEmail(email) {
         let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

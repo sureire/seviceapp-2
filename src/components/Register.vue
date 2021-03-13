@@ -54,7 +54,7 @@
             <q-btn :disable="!chktc" color="primary" type="submit" label="Register" />
         </div>
         <q-dialog v-model="enableotp" persistent transition-show="scale" transition-hide="scale">
-            <otpform text='Enter OTP for login' @success="onOtpSuccess"/>
+            <otpform :text="otp" @success="onOtpSuccess"/>
         </q-dialog>
         <q-dialog v-model="showtc" persistent transition-show="rotate" transition-hide="rotate">
              <tc-form />
@@ -73,6 +73,7 @@ export default {
     data() {
         return {
             enableotp:false,
+            otp:null,
             showtc:false,
             chktc:false,            
             provider: {
@@ -86,11 +87,12 @@ export default {
         }
     },
     methods : {
-                onSubmit(){
+                async onSubmit(){
                     if (this.$refs.name.hasError || this.$refs.email.hasError || this.$refs.mobile.hasError) {
                         this.showNotifyError('Missing data, please complete all the fields')
                         return
                     }
+                    this.otp = await this.sendOTP(' ' + this.provider.name,this.provider.mobile)
                     this.enableotp = true
                 },
                 onOtpSuccess() {
