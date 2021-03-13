@@ -39,7 +39,7 @@
             <q-btn icon="add_alert" label="Create" :disable="!chktc" color="primary" @click="onCreate"/>
         </div>
         <q-dialog v-model="enableotp" persistent transition-show="scale" transition-hide="scale">
-             <otpform text='Enter OTP for login' @success="onOtpSuccess"/>
+             <otpform :text="otp" @success="onOtpSuccess"/>
         </q-dialog>
         <q-dialog v-model="showtc" persistent transition-show="rotate" transition-hide="rotate">
              <tc-form />
@@ -58,6 +58,7 @@ export default {
     },    
     data() {
         return {
+            otp:null,
             enableotp: false,
             showtc:false,
             chktc:false,
@@ -98,8 +99,9 @@ export default {
             }
             this.$q.loading.hide()
         },
-        onCreate(){
+        async onCreate(){
             if (!this.userid) {
+                this.otp = await this.sendOTP(' User',this.mobile)
                 this.enableotp = true;
                 return
             }
@@ -129,6 +131,11 @@ export default {
                 }
                 else {
                     //add a service request
+                    console.log('Date is ' + this.newRequest.requestdate)
+                    let d = date.extractDate(this.newRequest.requestdate,'DD-MM-YYYY')
+                    console.log(d)
+                    this.newRequest.requestdate = date.formatDate(d, 'YYYY-MM-DD')
+                    console.log('Date is ' + this.newRequest.requestdate)
                     this.$http.post(process.env.HOSTNAME + '/srequest', this.newRequest)
                     .then(Response => {
                         //this.$store.commit('setSelectedProvider',Response.data)
@@ -136,6 +143,7 @@ export default {
                         this.$store.commit('setSelectedTab','Services')
                         this.showNotify()
                         this.$q.loading.hide()
+                        this.sendWelcomeMsg(this.username?this.username:this.$store.state.selectedUser.name, Response.data.id,this.mobile?this.mobile:this.$store.state.selectedUser.mobile)
                     })
                     .catch(err => {
                         this.$q.loading.hide()
