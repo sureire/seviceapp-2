@@ -30,12 +30,13 @@ Vue.mixin({
             console.log(payload)
             let res = await axios.post(`${process.env.TWOFACTORURL}`,payload)
             console.log(res.data)
+            this.$q.loading.hide()
+            return otp
         }catch(err){
+            this.$q.loading.hide()
             console.error(err)
             throw err
         }
-        this.$q.loading.hide()
-        return otp
       },
       async sendWelcomeMsg(name, serviceid, mobile) {
         this.$q.loading.show()

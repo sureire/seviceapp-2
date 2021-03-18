@@ -29,6 +29,7 @@
             <q-item-label class="q-pl-sm">greenudt@gmail.com</q-item-label>
           </div>
       </q-card-section>
+  
     </q-card>
 </template>
 

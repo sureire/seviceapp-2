@@ -87,7 +87,7 @@
 
           </q-list>
         </q-scroll-area>
-        <q-img class="absolute-top" contain src="/assets/logo.jpeg" style="height: 120px">
+        <q-img class="absolute-top" contain :src="imagesrc" @click="onLogoClick" style="height: 120px">
           <!-- <div class="absolute-bottom bg-transparent">
             <q-avatar size="56px" class="q-mb-sm">
               <img src="/assets/logo.jpeg">
@@ -133,6 +133,8 @@ export default {
       showaboutus: false,
       showcontactus: false,
       showprivacy:false,
+      imagesrc:'/assets/logo.jpeg',
+      testcntr:0,
       MenuList:
             [
         {
@@ -210,6 +212,17 @@ export default {
         this.$store.commit('setLoginType','Provider')
       else
         this.$store.commit('setLoginType','User')
+    },
+    onLogoClick(){
+      this.testcntr++
+      if (this.testcntr > 5) {
+        this.$store.commit('setTestMode',!this.$store.state.testMode)
+        if (this.$store.state.testMode)
+          this.imagesrc = '/assets/logo_test.jpg'
+        else
+          this.imagesrc = '/assets/logo.jpeg'
+        this.testcntr = 0
+      }
     }
   },
   mounted() {

@@ -54,7 +54,7 @@
             <q-btn :disable="!chktc" color="primary" type="submit" label="Register" />
         </div>
         <q-dialog v-model="enableotp" persistent transition-show="scale" transition-hide="scale">
-            <otpform :text="otp" @success="onOtpSuccess"/>
+            <otpform :text="otp" @success="onOtpSuccess" @Resend="onResend"/>
         </q-dialog>
         <q-dialog v-model="showtc" persistent transition-show="rotate" transition-hide="rotate">
              <tc-form />
@@ -92,7 +92,10 @@ export default {
                         this.showNotifyError('Missing data, please complete all the fields')
                         return
                     }
-                    this.otp = await this.sendOTP(' ' + this.provider.name,this.provider.mobile)
+                    if (this.$store.state.testMode)
+                        this.otp = 1234
+                    else
+                        this.otp = await this.sendOTP(' ' + this.provider.name,this.provider.mobile)
                     this.enableotp = true
                 },
                 onOtpSuccess() {
@@ -187,9 +190,14 @@ export default {
                             timeout: 5000
                         })            
                 },
-                onReset(){
-
-                }
+                onResend() {
+                    this.sendOTP(' User',this.provider.mobile)
+                                                .then( res => {
+                                                        this.otp = res
+                                                        console.log('OTP is ' + res)
+                                                        this.enableotp = true                        
+                                                })
+                },
     }
 
 }

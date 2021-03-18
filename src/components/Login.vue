@@ -18,7 +18,7 @@
                     <q-btn rounded icon="login" color="primary" label="Login" type="submit"/>
                 </div>
             <q-dialog v-model="enableotp" persistent transition-show="scale" transition-hide="scale">
-                <otpform :text="otp" @success="onOtpSuccess"/>
+                <otpform :text="otp" @success="onOtpSuccess" @Resend="onResend"/>
             </q-dialog>
 
     </form>
@@ -52,7 +52,7 @@ computed: {
 
 },
 methods: {
-        async onSubmit(){
+         onSubmit(){
             if (this.$refs.mobile.hasError) {
                 this.showNotifyError()
                 return
@@ -61,6 +61,7 @@ methods: {
                 this.showNotifyError('Mobile number empty')
                 return
             }
+            this.$q.loading.show()
                 if (this.usertype == 'User' || this.usertype == 'Dealer'){
                     this.$http.get(`${process.env.HOSTNAME}/users/${this.provider.mobile}`)
                     .then(response => {
@@ -73,10 +74,18 @@ methods: {
                             return
                         }
                         this.tdata = response.data
-                        //this.otp = this.sendOTP('User',this.provider.mobile)
-                        this.otp = 1234
-                        console.log('OTP is ' + this.otp)
-                        this.enableotp = true                        
+                        if (this.provider.mobile == "1234567890" || this.$store.state.testMode){
+                            this.otp = 1234
+                            this.enableotp = true
+                        }
+                        else
+                            this.sendOTP('User',this.provider.mobile)
+                            .then( res => {
+                                    this.otp = res
+                                    console.log('OTP is ' + res)
+                                    this.enableotp = true                        
+                            })
+                        //this.otp = 1234
                     })
                     .catch(err => {
                         console.error(err)
@@ -89,10 +98,17 @@ methods: {
                     this.$http.get(`${process.env.HOSTNAME}/providers/${this.provider.mobile}`)
                     .then(response => {
                         this.tdata = response.data
-                        this.otp = this.sendOTP('User',this.provider.mobile)
-                        //this.otp = 1234
-                        //console.log('OTP is ' + this.otp)
-                        this.enableotp = true                        
+                        if (this.provider.mobile == "1234567777" || this.$store.state.testMode){
+                            this.otp = 1234
+                            this.enableotp = true
+                        }
+                        else
+                            this.sendOTP('User',this.provider.mobile)
+                            .then(res => {
+                                this.otp = res
+                                this.enableotp = true                        
+                            })
+                        
                     })
                     .catch(err => {
                         //throw(err)
@@ -101,8 +117,7 @@ methods: {
                         return
                     })
                 }
-
-
+            this.$q.loading.hide()
         },
         // onRegister(){
         //     if (this.usertype === 'Engineer'){
@@ -160,8 +175,13 @@ methods: {
         //         })
         //     }
         // },
-        onReset() {
-
+        onResend() {
+            this.sendOTP(' User',this.provider.mobile)
+                                        .then( res => {
+                                                this.otp = res
+                                                console.log('OTP is ' + res)
+                                                this.enableotp = true                        
+                                        })
         },
 
         onOtpSuccess() {

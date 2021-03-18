@@ -47,11 +47,14 @@
             <p style="padding-left: 40px;"><strong>NOTE:</strong><br />Even if any issues occur on the customer site or to the service engineers, the company<br />wouldn&rsquo;t take any responsible for that.</p>              
           </div>
         </q-card-section>
+
+
       </q-card>
 </template>
 
 <script>
 export default {
+
 
 }
 </script>

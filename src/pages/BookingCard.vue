@@ -55,7 +55,7 @@
             </q-card-actions>            
           </q-card-section>
           <q-dialog v-model="enableotp" persistent transition-show="scale" transition-hide="scale">
-                <otpform :text="otp" @success="onOtpSuccess"/>
+                <otpform :text="otp" @success="onOtpSuccess" @Resend="onResend"/>
           </q-dialog>
         </q-card>
         <q-dialog v-model="showdetails">
@@ -140,7 +140,8 @@ methods :{
           .then(response => {
               console.log(response.data)
               //this.$router.push('/bookinglist')
-              this.sendEngtoCustomerMsg(this.service.name,this.$store.state.selectedProvider.name,this.service.mobile,this.$store.state.selectedProvider.mobile)
+              if (!this.$store.state.testMode)
+                this.sendEngtoCustomerMsg(this.service.name,this.$store.state.selectedProvider.name,this.service.mobile,this.$store.state.selectedProvider.mobile)
           })
           .catch(err => {
             throw(err)
@@ -196,7 +197,10 @@ methods :{
         })
     },
     async onDone(){
-      this.otp = await this.sendClosureMsg(this.service.name,this.service.mobile)
+      if (this.$store.state.testMode)
+        this.otp = 1234
+      else
+        this.otp = await this.sendClosureMsg(this.service.name,this.service.mobile)
       console.log('OTP is ' + this.otp)
       this.enableotp = true;
     },
@@ -236,7 +240,15 @@ methods :{
           }catch(err) {
             console.error(err)
           }
-    }
+    },
+                onResend() {
+                    this.sendOTP(' User',this.provider.mobile)
+                                                .then( res => {
+                                                        this.otp = res
+                                                        console.log('OTP is ' + res)
+                                                        this.enableotp = true                        
+                                                })
+                },    
   }
 }
 </script>

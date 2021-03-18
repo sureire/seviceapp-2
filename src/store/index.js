@@ -22,7 +22,8 @@ export default new Vuex.Store({
     Providers: [], 
     BookingList: [],
     Settings:[],
-    service_amt: null
+    service_amt: null,
+    testMode:false    
   },
   mutations: {
     addTask(state, newTaskTitle) {
@@ -80,8 +81,12 @@ export default new Vuex.Store({
     },
     setSettings(state, setting){
       state.Settings = setting
-      let a = setting.filter(a => a.key1 === 'service_amount')
+      let a = setting.filter(a => a.key1 === 'service_amount ₹')
       state.service_amt = a[0].value
+      console.log('state.service_amt: ' + state.service_amt)
+    },
+    setTestMode(state, mode){
+      state.testMode = mode
     }
 
 

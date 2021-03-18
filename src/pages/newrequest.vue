@@ -143,7 +143,8 @@ export default {
                         this.$store.commit('setSelectedTab','Services')
                         this.showNotify()
                         this.$q.loading.hide()
-                        this.sendWelcomeMsg(this.username?this.username:this.$store.state.selectedUser.name, Response.data.id,this.mobile?this.mobile:this.$store.state.selectedUser.mobile)
+                        if (!this.$store.state.testMode)
+                            this.sendWelcomeMsg(this.username?this.username:this.$store.state.selectedUser.name, Response.data.id,this.mobile?this.mobile:this.$store.state.selectedUser.mobile)
                     })
                     .catch(err => {
                         this.$q.loading.hide()
