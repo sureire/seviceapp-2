@@ -26,7 +26,7 @@ export default {
    },
    methods: {
        addService(){
-           console.log('from addService')
+           //console.log('from addService')
            this.$router.push('/newrequest')
        }
    },

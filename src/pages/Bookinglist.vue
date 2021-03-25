@@ -77,7 +77,7 @@ export default {
               }catch(err) {
                     throw(err)
               }
-              console.log('service length is ' + this.services.length)
+              //console.log('service length is ' + this.services.length)
               this.$q.loading.hide()
           }
         }

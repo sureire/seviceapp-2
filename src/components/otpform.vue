@@ -37,13 +37,13 @@ export default {
     },
     methods: {
         onOK(){
-            console.log(this.text)
-            console.log(this.otp)
+            //console.log(this.text)
+            //console.log(this.otp)
             if (!this.otp)
               return
             this.iserror = false
             if (this.otp == this.text) {
-              console.log('emiting success')
+              //console.log('emiting success')
               this.$emit('success')
             }
             else {

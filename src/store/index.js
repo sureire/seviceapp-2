@@ -59,7 +59,7 @@ export default new Vuex.Store({
     SET_CITIES(state, dblocations) {
       state.Locations = []
       dblocations.forEach(e => state.Locations.push(e.name))
-      console.log(state.Locations)
+      //console.log(state.Locations)
       //state.Locations = dblocations
     },
     SET_CATEGORIES(state, dbcategories) {
@@ -83,7 +83,7 @@ export default new Vuex.Store({
       state.Settings = setting
       let a = setting.filter(a => a.key1 === 'service_amount ₹')
       state.service_amt = a[0].value
-      console.log('state.service_amt: ' + state.service_amt)
+      //console.log('state.service_amt: ' + state.service_amt)
     },
     setTestMode(state, mode){
       state.testMode = mode
@@ -93,10 +93,10 @@ export default new Vuex.Store({
   },
   actions: {
     getLocations({commit}) {
-      console.log(process.env.HOSTNAME + '/cities')
+      //console.log(process.env.HOSTNAME + '/cities')
       axios.get(process.env.HOSTNAME + '/cities')
         .then(response => {
-          console.log(response.data)
+          //console.log(response.data)
           commit('SET_CITIES', response.data)
         }).catch (err => {
           throw err

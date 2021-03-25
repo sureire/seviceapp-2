@@ -87,7 +87,7 @@ export default {
             if (!this.userid) {
                 this.$http.get(`${process.env.HOSTNAME}/users/${this.mobile}`)
                 .then(response => {
-                    console.log(response.data)
+                    //console.log(response.data)
                     if (response.data){
                         this.CreateRequest()
                     }
@@ -116,10 +116,10 @@ export default {
         CreateRequest(){
             this.$q.loading.show()
             //duplicate check for service request
-            console.log(`${process.env.HOSTNAME}/srequestdupcheck/${this.newRequest.userid}/${this.newRequest.location}/${this.newRequest.category}`)
+            //console.log(`${process.env.HOSTNAME}/srequestdupcheck/${this.newRequest.userid}/${this.newRequest.location}/${this.newRequest.category}`)
             this.$http.get(`${process.env.HOSTNAME}/srequestdupcheck/${this.newRequest.userid}/${this.newRequest.location}/${this.newRequest.category}`)
             .then(response => {
-                console.log('response is ' + JSON.stringify(response.data))
+                //console.log('response is ' + JSON.stringify(response.data))
                 if (response.data.cnt > 0){
                     this.$q.dialog({
                         title: 'Alert',
@@ -131,11 +131,11 @@ export default {
                 }
                 else {
                     //add a service request
-                    console.log('Date is ' + this.newRequest.requestdate)
+                    //console.log('Date is ' + this.newRequest.requestdate)
                     let d = date.extractDate(this.newRequest.requestdate,'DD-MM-YYYY')
-                    console.log(d)
+                    //console.log(d)
                     this.newRequest.requestdate = date.formatDate(d, 'YYYY-MM-DD')
-                    console.log('Date is ' + this.newRequest.requestdate)
+                    //console.log('Date is ' + this.newRequest.requestdate)
                     this.$http.post(process.env.HOSTNAME + '/srequest', this.newRequest)
                     .then(Response => {
                         //this.$store.commit('setSelectedProvider',Response.data)
@@ -199,7 +199,7 @@ export default {
         
     },
     mounted() {
-        console.log('userid is ' + this.userid)
+        //console.log('userid is ' + this.userid)
     }
 
 }

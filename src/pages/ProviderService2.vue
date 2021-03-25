@@ -26,12 +26,12 @@ export default {
     },
     methods: {
         addSer(){
-            console.log('reached')
+            //console.log('reached')
           this.$router.push('/addservice')
         }
     },
     mounted() {
-      console.log(this.$store.state.selectedProvider.id)
+      //console.log(this.$store.state.selectedProvider.id)
       this.$http.get(`${process.env.HOSTNAME}/services/${this.$store.state.selectedProvider.id}`)
       .then(response => {
           this.services = response.data

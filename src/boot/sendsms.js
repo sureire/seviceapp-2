@@ -9,7 +9,7 @@ Vue.mixin({
       async testapi(mobile){
         try {
             let res = await axios.get(`${process.env.HOSTNAME}/users/${mobile}`)
-            console.log(res.data)
+            //console.log(res.data)
         }catch(err){
             console.error(err)
             throw err
@@ -27,9 +27,9 @@ Vue.mixin({
             VAR2:otp.toString()
         }
         try {
-            console.log(payload)
+            //console.log(payload)
             let res = await axios.post(`${process.env.TWOFACTORURL}`,payload)
-            console.log(res.data)
+            //console.log(res.data)
             this.$q.loading.hide()
             return otp
         }catch(err){
@@ -50,7 +50,7 @@ Vue.mixin({
         }
         try {
             let res = await axios.post(`${process.env.TWOFACTORURL}`,payload)
-            console.log(res.data)
+            //console.log(res.data)
         }catch(err){
             console.error(err)
             throw err
@@ -71,7 +71,7 @@ Vue.mixin({
         }
         try {
             let res = await axios.post(`${process.env.TWOFACTORURL}`,payload)
-            console.log(res.data)
+            //console.log(res.data)
         }catch(err){
             console.error(err)
             throw err
@@ -90,7 +90,7 @@ Vue.mixin({
         }
         try {
             let res = await axios.post(`${process.env.TWOFACTORURL}`,payload)
-            console.log(res.data)
+            //console.log(res.data)
         }catch(err){
             console.error(err)
             throw err
@@ -110,7 +110,7 @@ Vue.mixin({
         }
         try {
             let res = await axios.post(`${process.env.TWOFACTORURL}`,payload)
-            console.log(res.data)
+            //console.log(res.data)
         }catch(err){
             console.error(err)
             throw err

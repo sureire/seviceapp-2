@@ -47,7 +47,7 @@ data(){
 },
 methods: {
     onAdd(){
-        console.log(this.service)
+        //console.log(this.service)
         if (!this.service.name || !this.service.category || !this.service.location)
             this.$q.notify('Missing fields in Add Service. Please add all the details...')
         else {

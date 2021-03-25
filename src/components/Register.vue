@@ -104,10 +104,10 @@ export default {
                 },
                 onRegister(){
                     if (this.usertype === 'Engineer'){
-                        console.log(`${process.env.HOSTNAME}/providers/${this.provider.mobile}`)
+                        //console.log(`${process.env.HOSTNAME}/providers/${this.provider.mobile}`)
                         this.$http.get(`${process.env.HOSTNAME}/providers/${this.provider.mobile}`)
                         .then(response => {
-                            console.log(response.data)
+                            //console.log(response.data)
                             if (response.data){
                                 // this.$q.dialog({
                                 // title: 'Alert',
@@ -134,10 +134,10 @@ export default {
                         })
                     }
                     else {
-                        console.log(`${process.env.HOSTNAME}/users/${this.provider.mobile}`)
+                        //console.log(`${process.env.HOSTNAME}/users/${this.provider.mobile}`)
                         this.$http.get(`${process.env.HOSTNAME}/users/${this.provider.mobile}`)
                         .then(response => {
-                            console.log(response.data)
+                            //console.log(response.data)
                             if (response.data){
                                 // this.$q.dialog({
                                 // title: 'Alert',
@@ -194,7 +194,7 @@ export default {
                     this.sendOTP(' User',this.provider.mobile)
                                                 .then( res => {
                                                         this.otp = res
-                                                        console.log('OTP is ' + res)
+                                                        //console.log('OTP is ' + res)
                                                         this.enableotp = true                        
                                                 })
                 },

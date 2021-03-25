@@ -1,5 +1,5 @@
 <template>
-  <q-page class="constrain-more q-pa-md">
+  <q-page class="constrain q-pa-md">
      <!-- <div class="q-pa-md" style="max-width: 500px"> -->
     <div  >
         <!-- <div class="self-center" style="max-width: 500px"> -->
@@ -19,9 +19,58 @@
           </div>
       <!-- </div> -->
    </div>
-     <!-- <div class="q-gutter-md" v-if="showlogin">
-       <login :type="$store.state.usertype" />
-     </div> -->
+
+    <div class="q-mt-xl">
+      <q-carousel
+        v-model="slide"
+        transition-prev="slide-right"
+        transition-next="slide-left"
+        infinite
+        :autoplay="autoplay"        
+        animated
+        control-color="primary"
+        navigation
+        arrows
+        class="shadow-2 rounded-borders"
+      >
+        <q-carousel-slide :name="1" class="column no-wrap">
+          <div class="row fit justify-start items-center q-gutter-xs q-col-gutter no-wrap">
+            <q-img class="rounded-borders col-6 full-height" contain src="~assets/1.jpeg" />
+            <q-img class="rounded-borders col-6 full-height" contain src="~assets/2.jpeg" />
+          </div>
+        </q-carousel-slide>
+        <q-carousel-slide :name="2" class="column no-wrap">
+          <div class="row fit justify-start items-center q-gutter-xs q-col-gutter no-wrap">
+            <q-img class="rounded-borders col-6 full-height" contain src="~assets/3.jpeg" />
+            <q-img class="rounded-borders col-6 full-height" contain src="~assets/4.jpeg" />
+          </div>
+        </q-carousel-slide>
+        <q-carousel-slide :name="3" class="column no-wrap">
+          <div class="row fit justify-start items-center q-gutter-xs q-col-gutter no-wrap">
+            <q-img class="rounded-borders col-6 full-height" contain src="~assets/5.jpeg" />
+            <q-img class="rounded-borders col-6 full-height" contain src="~assets/6.jpeg" />
+          </div>
+        </q-carousel-slide>
+        <q-carousel-slide :name="4" class="column no-wrap">
+          <div class="row fit justify-start items-center q-gutter-xs q-col-gutter no-wrap">
+            <q-img class="rounded-borders col-6 full-height" contain src="~assets/7.jpeg" />
+            <q-img class="rounded-borders col-6 full-height" contain src="~assets/8.jpeg" />
+          </div>
+        </q-carousel-slide>
+        <q-carousel-slide :name="5" class="column no-wrap">
+          <div class="row fit justify-start items-center q-gutter-xs q-col-gutter no-wrap">
+            <q-img class="rounded-borders col-6 full-height" contain src="~assets/9.jpeg" />
+            <q-img class="rounded-borders col-6 full-height" contain src="~assets/10.jpeg" />
+          </div>
+        </q-carousel-slide>
+        <q-carousel-slide :name="6" class="column no-wrap">
+          <div class="row fit justify-start items-center q-gutter-xs q-col-gutter no-wrap">
+            <q-img class="rounded-borders col-6 full-height" contain src="~assets/11.jpeg" />
+            <q-img class="rounded-borders col-6 full-height" contain src="~assets/12.jpeg" />
+          </div>
+        </q-carousel-slide>
+      </q-carousel>
+    </div>
   </q-page>
 </template>
 
@@ -33,7 +82,9 @@ export default {
     return {
       location: '',
       service: '',
-      showlogin: 'false'
+      showlogin: 'false',
+      slide: 1,
+      autoplay: true
     }
   },
   methods: {

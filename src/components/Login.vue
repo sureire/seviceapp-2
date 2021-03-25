@@ -82,7 +82,7 @@ methods: {
                             this.sendOTP('User',this.provider.mobile)
                             .then( res => {
                                     this.otp = res
-                                    console.log('OTP is ' + res)
+                                    //console.log('OTP is ' + res)
                                     this.enableotp = true                        
                             })
                         //this.otp = 1234
@@ -179,13 +179,13 @@ methods: {
             this.sendOTP(' User',this.provider.mobile)
                                         .then( res => {
                                                 this.otp = res
-                                                console.log('OTP is ' + res)
+                                                //console.log('OTP is ' + res)
                                                 this.enableotp = true                        
                                         })
         },
 
         onOtpSuccess() {
-                console.log('reached')
+                //console.log('reached')
                this.enableotp = false
             if (this.usertype == 'User' || this.usertype == 'Dealer'){
                     this.$q.notify('User ' + this.tdata.name + ' logged in!!')
@@ -227,7 +227,7 @@ methods: {
                 })            
         },
         DuplicateCheck(){
-            console.log(this.register)
+            //console.log(this.register)
 
 
 

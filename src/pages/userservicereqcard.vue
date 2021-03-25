@@ -51,7 +51,7 @@ export default {
           return false
       },
       pickemoji(){
-        console.log('ratings is ' + this.request.ratings)
+        //console.log('ratings is ' + this.request.ratings)
         if (!this.request.ratings || this.request.ratings == 0){
           this.request.ratings = 0
           return 'far fa-comment-dots'

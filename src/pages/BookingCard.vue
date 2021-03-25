@@ -134,11 +134,11 @@ methods :{
           serviceprovider: this.$store.state.selectedProvider.id,
           status:'in progress'
         }
-        console.log('ustatus is ' + ustatus)
+        //console.log('ustatus is ' + ustatus)
         if (ustatus) {
           this.$http.put(`${process.env.HOSTNAME}/srequest/${this.service.id}`,supdate)
           .then(response => {
-              console.log(response.data)
+              //console.log(response.data)
               //this.$router.push('/bookinglist')
               if (!this.$store.state.testMode)
                 this.sendEngtoCustomerMsg(this.service.name,this.$store.state.selectedProvider.name,this.service.mobile,this.$store.state.selectedProvider.mobile)
@@ -147,7 +147,7 @@ methods :{
             throw(err)
           })
           let newamount = +this.$store.state.selectedProvider.walletbalance - parseInt(this.$store.state.service_amt)
-          console.log('newamount is ' + newamount)
+          //console.log('newamount is ' + newamount)
           this.$http.put(process.env.HOSTNAME + '/provider', {id: this.$store.state.selectedProvider.id, amount: newamount})
           .then(res=>{
               this.$q.notify('Wallet updated to ' + newamount + ' for Engineer ' + this.$store.state.selectedProvider.name)
@@ -162,7 +162,7 @@ methods :{
               })              
               this.$http.get(process.env.HOSTNAME + '/provider/' + this.$store.state.selectedProvider.id)
               .then(res => {
-                  console.log('Provider ' + res.data)
+                  //console.log('Provider ' + res.data)
                   this.$store.commit('setSelectedProvider', res.data) 
                   //this.$store.dispatch('getBookingList', this.$store.state.selectedProvider.id)
                   this.$emit('UpdateBookingList')
@@ -201,7 +201,7 @@ methods :{
         this.otp = 1234
       else
         this.otp = await this.sendClosureMsg(this.service.name,this.service.mobile)
-      console.log('OTP is ' + this.otp)
+      //console.log('OTP is ' + this.otp)
       this.enableotp = true;
     },
     onOtpSuccess(){
@@ -214,11 +214,11 @@ methods :{
               serviceprovider: this.$store.state.selectedProvider.id,
               status:status
           }
-          console.log(cstatus)
+          //console.log(cstatus)
           this.$http.put(`${process.env.HOSTNAME}/srequest/${this.service.id}`,cstatus)
           .then(response => {
               this.$q.notify('Status changed to ' + status + ' successfully..')
-              console.log(response.data)
+              //console.log(response.data)
               //this.$store.dispatch('getBookingList', this.$store.state.selectedProvider.id)
               this.$emit('UpdateBookingList')
           })
@@ -226,7 +226,7 @@ methods :{
     async checkOpencalls(){
       try {
           let response = await this.$http.get(`${process.env.HOSTNAME}/opencalls/${this.$store.state.selectedProvider.id}`)
-          console.log('opencalls result: ' + response.data.cnt)
+          //console.log('opencalls result: ' + response.data.cnt)
           this.opencalls = response.data.cnt
         }catch(err) {
             console.error(err)
@@ -235,7 +235,7 @@ methods :{
     async checkServiceCountperdat(){
       try {
            let response = await this.$http.get(`${process.env.HOSTNAME}/totalserviceperday/${this.$store.state.selectedProvider.id}`)
-            console.log('totalserviceperday result: ' + response.data.cnt)
+            //console.log('totalserviceperday result: ' + response.data.cnt)
             this.servicecnt = response.data.cnt
           }catch(err) {
             console.error(err)
@@ -245,7 +245,7 @@ methods :{
                     this.sendOTP(' User',this.provider.mobile)
                                                 .then( res => {
                                                         this.otp = res
-                                                        console.log('OTP is ' + res)
+                                                        //console.log('OTP is ' + res)
                                                         this.enableotp = true                        
                                                 })
                 },    

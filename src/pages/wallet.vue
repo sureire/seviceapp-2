@@ -85,14 +85,15 @@ methods: {
                           this.verifySignature(response)
                       },
                   }
-                  console.log(options)
+                  //console.log(options)
                   var rzp = new Razorpay(options)
                   rzp.open();
             })
             .catch(error => {
                     this.$q.loading.hide()
-                    console.log(error)
+                    console.error(error)
             })
+            this.$q.loading.hide()
     },
     verifySignature(response){
         this.$http.post(`${process.env.HOSTNAME}/verifyPayment`,response)

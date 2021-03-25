@@ -189,9 +189,9 @@ export default {
         item.active=true
         this.selectedmenu = item
         this.$store.commit('setLoginType',item.name)
-        console.log(this.$router.name)
-        console.log('Selected User: ' + JSON.stringify(this.$store.state.selectedUser))
-        console.log('Selected Eng: ' + JSON.stringify(this.$store.state.selectedProvider))
+        //console.log(this.$router.name)
+        //console.log('Selected User: ' + JSON.stringify(this.$store.state.selectedUser))
+        //console.log('Selected Eng: ' + JSON.stringify(this.$store.state.selectedProvider))
         const path = `/Pageauth`
         if (this.$route.path !== path) this.$router.push(path)
     },
