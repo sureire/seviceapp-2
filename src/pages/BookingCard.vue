@@ -119,7 +119,7 @@ methods :{
       else if(this.servicecnt > 9){
         this.$q.dialog({
           title: 'Alert',
-          message: `${this.$store.state.selectedProvider.name} have 3 open calls already. Not allowed to take a new call`
+          message: `${this.$store.state.selectedProvider.name} have 10 calls for today. Not allowed to take a new call`
         }).onDismiss(() => {
           return
         })
@@ -140,7 +140,9 @@ methods :{
           .then(response => {
               //console.log(response.data)
               //this.$router.push('/bookinglist')
-              if (!this.$store.state.testMode)
+              if (this.$store.state.testMode)
+                console.log('skipping the sms msg since its in the test mode')
+              else
                 this.sendEngtoCustomerMsg(this.service.name,this.$store.state.selectedProvider.name,this.service.mobile,this.$store.state.selectedProvider.mobile)
           })
           .catch(err => {

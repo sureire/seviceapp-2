@@ -17,9 +17,11 @@
                 Emergency
               </q-chip>
           </div>
+          
         </q-item-section>
 
         <q-item-section side bottom>
+            <q-btn flat round icon="collections" @click="showpicfrom=true" />
             <q-badge :color="request.color">
               {{request.status}}
             </q-badge>
@@ -33,6 +35,12 @@
   <q-dialog v-model="showfeedback" persistent transition-show="scale" transition-hide="scale">
       <feedbackform :service="request" @done="onFeedback"/>
   </q-dialog>  
+  <q-dialog v-model="showpicfrom" transition-show="scale" transition-hide="scale">
+      <servicepicform :service="request"/>
+  </q-dialog>  
+  <!-- <div v-if="showpicfrom">
+    <servicepicform :service="request"/>
+  </div> -->
 </div>
 </template>
 
@@ -42,6 +50,7 @@ export default {
 
     components :{
         'feedbackform' : require('components/feedback.vue').default,
+        'servicepicform' : require('components/servicepics.vue').default,
     }, 
     computed:{
       showRatingIcon(){
@@ -64,6 +73,7 @@ export default {
     }, 
   data(){
     return {
+      showpicfrom :false,
       showfeedback: false,
             icons: [
         'fas fa-tired',
@@ -77,6 +87,9 @@ export default {
   methods: {
     onFeedback(){
       this.showfeedback = false
+    },
+    showpics(){
+
     }
   }
 

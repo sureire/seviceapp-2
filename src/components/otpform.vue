@@ -37,8 +37,8 @@ export default {
     },
     methods: {
         onOK(){
-            //console.log(this.text)
-            //console.log(this.otp)
+            console.log(this.text)
+            console.log(this.otp)
             if (!this.otp)
               return
             this.iserror = false

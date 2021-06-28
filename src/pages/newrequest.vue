@@ -30,6 +30,22 @@
         <q-input v-model="newRequest.description" label="Service Description" />
         <q-select class="q-pt-md" v-model="newRequest.preferedtimeslot" :options="timeslot" label="Pick a TimeSlot" />
         <q-toggle class="q-pt-md" v-model="newRequest.emergency" color="red" label="Emergency" />
+        <div class="q-pa-md">
+            <q-file
+            v-model="files"
+            label="Upload Images"
+            filled
+            multiple
+            accept=".jpg, image/*"
+            max-files="3"
+            style="max-width: 300px"
+            @rejected="onRejected"
+            >
+                <template v-slot:prepend>
+                    <q-icon name="cloud_upload" />
+                </template>
+            </q-file>
+        </div>
         <q-checkbox class="q-pt-md" v-model="chktc">
             <div class="text-weight-medium">  
             I read and accept the <a href="" @click="showtc=true" >terms and conditions</a> of VplusU.in
@@ -38,6 +54,7 @@
         <div class="q-pt-xs">
             <q-btn icon="add_alert" label="Create" :disable="!chktc" color="primary" @click="onCreate"/>
         </div>
+        <q-linear-progress :value="uploadValue" class="q-mt-md" />
         <q-dialog v-model="enableotp" persistent transition-show="scale" transition-hide="scale">
              <otpform :text="otp" @success="onOtpSuccess"/>
         </q-dialog>
@@ -51,6 +68,8 @@
 
 <script>
 import { date } from 'quasar'
+import {fsstorage } from 'boot/firebase'
+
 export default {
     components :{
         'otpform' : require('components/otpform.vue').default,
@@ -77,7 +96,9 @@ export default {
                 description: '',
                 createdby: null
             },
-            timeslot :['Morning', 'Afternoon', 'Evening' ] 
+            timeslot :['Morning', 'Afternoon', 'Evening' ] ,
+            files: null,
+            uploadValue: 0
         }
     },
 
@@ -89,6 +110,7 @@ export default {
                 .then(response => {
                     //console.log(response.data)
                     if (response.data){
+                        this.newRequest.userid = response.data.id
                         this.CreateRequest()
                     }
                 })
@@ -101,7 +123,10 @@ export default {
         },
         async onCreate(){
             if (!this.userid) {
-                this.otp = await this.sendOTP(' User',this.mobile)
+                if (this.$store.state.testMode)
+                    this.otp = 1234
+                else
+                    this.otp = await this.sendOTP(' User',this.mobile)
                 this.enableotp = true;
                 return
             }
@@ -121,11 +146,11 @@ export default {
             .then(response => {
                 //console.log('response is ' + JSON.stringify(response.data))
                 if (response.data.cnt > 0){
+                    this.$q.loading.hide()
                     this.$q.dialog({
                         title: 'Alert',
                         message: 'Service Request already added, please contact VplusU'
                     }).onDismiss(()=>{
-                        this.$q.loading.hide()
                         return
                     })
                 }
@@ -139,11 +164,23 @@ export default {
                     this.$http.post(process.env.HOSTNAME + '/srequest', this.newRequest)
                     .then(Response => {
                         //this.$store.commit('setSelectedProvider',Response.data)
+                        if (this.files){
+                            this.files.forEach(e => {
+                                console.log(e)
+                                const sref = fsstorage.ref(`ServiceReqPics/${Response.data.id}/${e.name}`).put(e)
+                                sref.on(`state_changed`, snapshot => {
+                                    this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100
+                                }, error => {console.error(error.message)}, 
+                                () =>{ this.uploadValue =100})
+                            })
+                        }
                         this.$router.push('/userrequests')
                         this.$store.commit('setSelectedTab','Services')
                         this.showNotify()
                         this.$q.loading.hide()
-                        if (!this.$store.state.testMode)
+                        if (this.$store.state.testMode)
+                            console.log('skipping the sms...')
+                        else
                             this.sendWelcomeMsg(this.username?this.username:this.$store.state.selectedUser.name, Response.data.id,this.mobile?this.mobile:this.$store.state.selectedUser.mobile)
                     })
                     .catch(err => {
@@ -196,7 +233,14 @@ export default {
             var res = date.formatDate(rightNow,'YYYY/MM/DD')
             return d >= res
             },            
-        
+            onRejected (rejectedEntries) {
+                // Notify plugin needs to be installed
+                // https://quasar.dev/quasar-plugins/notify#Installation
+                this.$q.notify({
+                    type: 'negative',
+                    message: `${rejectedEntries.length} file(s) did not pass validation constraints`
+                })
+            }
     },
     mounted() {
         //console.log('userid is ' + this.userid)
